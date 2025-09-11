@@ -37,8 +37,8 @@ const Upload = () => {
   return (
     <div className="p-8 max-w-4xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-foreground mb-2">Upload Your Track</h1>
-        <p className="text-muted-foreground">Share your music with professional producers and collaborate</p>
+        <h1 className="text-4xl font-bold text-foreground mb-2">My Page - Demo Upload</h1>
+        <p className="text-muted-foreground">Upload your demo tracks for review and potential collaboration</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -157,33 +157,25 @@ const Upload = () => {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label>Collaboration Preferences</Label>
-              <div className="grid grid-cols-2 gap-2">
-                <Button variant="outline" size="sm" className="justify-start">
-                  Production
-                </Button>
-                <Button variant="outline" size="sm" className="justify-start">
-                  Mixing
-                </Button>
-                <Button variant="outline" size="sm" className="justify-start">
-                  Mastering
-                </Button>
-                <Button variant="outline" size="sm" className="justify-start">
-                  Arrangement
-                </Button>
+            <div className="space-y-4">
+              <div className="p-4 rounded-lg bg-accent/10 border border-accent/20">
+                <h4 className="font-medium text-accent mb-2">Demo Track Guidelines</h4>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• Demo tracks are only viewable by our development team</li>
+                  <li>• Keep demos under 1 minute for initial review</li>
+                  <li>• Full tracks will be requested after approval</li>
+                  <li>• Include your best work that represents your style</li>
+                </ul>
               </div>
-            </div>
-
-            <div className="pt-4">
+              
               <Button 
                 className="w-full bg-gradient-neon hover:shadow-neon transition-all duration-300"
                 disabled={!isUploaded}
               >
-                Publish Track
+                Submit Demo for Review
               </Button>
               <p className="text-xs text-muted-foreground mt-2 text-center">
-                By publishing, you agree to our collaboration terms
+                Demo will be reviewed within 3-5 business days
               </p>
             </div>
           </CardContent>

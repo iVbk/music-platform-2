@@ -1,17 +1,51 @@
 import { NavLink } from "react-router-dom";
-import { Home, Upload, Users, TrendingUp, DollarSign, Music } from "lucide-react";
+import { Home, Upload, Users, TrendingUp, DollarSign, Music, MessageSquare, Search, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const Navigation = () => {
-  const navItems = [
-    { to: "/", label: "Dashboard", icon: Home },
-    { to: "/upload", label: "Upload", icon: Upload },
-    { to: "/review", label: "Review", icon: Music },
-    { to: "/agreements", label: "Agreements", icon: Users },
-    { to: "/distribution", label: "Distribution", icon: TrendingUp },
-    { to: "/earnings", label: "Earnings", icon: DollarSign },
-    { to: "/community", label: "Community", icon: Users },
-  ];
+  // This would come from user context/auth in real app
+  const userRole = 'artist'; // 'artist' | 'arranger' | 'engineer' | 'admin'
+  
+  const getNavItems = (role: string) => {
+    const baseItems = [
+      { to: "/", label: "Dashboard", icon: Home },
+    ];
+
+    if (role === 'artist') {
+      return [
+        ...baseItems,
+        { to: "/upload", label: "My Page", icon: Upload },
+        { to: "/search", label: "Search", icon: Search },
+        { to: "/rooms", label: "Production", icon: MessageSquare },
+        { to: "/earnings", label: "Earnings", icon: DollarSign },
+      ];
+    }
+
+    if (role === 'arranger' || role === 'engineer') {
+      return [
+        ...baseItems,
+        { to: "/profile", label: "My Profile", icon: Users },
+        { to: "/search", label: "Search", icon: Search },
+        { to: "/rooms", label: "Production", icon: MessageSquare },
+        { to: "/earnings", label: "Earnings", icon: DollarSign },
+      ];
+    }
+
+    if (role === 'admin') {
+      return [
+        ...baseItems,
+        { to: "/demo-review", label: "Demo Review", icon: Music },
+        { to: "/coordination", label: "Coordination", icon: Users },
+        { to: "/rooms", label: "All Rooms", icon: MessageSquare },
+        { to: "/analytics", label: "Analytics", icon: TrendingUp },
+        { to: "/settings", label: "Settings", icon: Settings },
+      ];
+    }
+
+    return baseItems;
+  };
+
+  const navItems = getNavItems(userRole);
 
   return (
     <nav className="fixed left-0 top-0 h-full w-64 bg-card border-r border-border p-6 z-50">
