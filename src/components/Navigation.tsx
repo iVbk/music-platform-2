@@ -1,10 +1,15 @@
 import { NavLink } from "react-router-dom";
-import { Home, Upload, Users, TrendingUp, DollarSign, Music, MessageSquare, Search, Settings } from "lucide-react";
+import { Home, Upload, Users, TrendingUp, DollarSign, Music, MessageSquare, Search, Settings, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
 
-const Navigation = () => {
-  // This would come from user context/auth in real app
-  const userRole = 'artist'; // 'artist' | 'arranger' | 'engineer' | 'admin'
+interface NavigationProps {
+  userRole: string;
+}
+
+const Navigation = ({ userRole }: NavigationProps) => {
+  const { signOut } = useAuth();
   
   const getNavItems = (role: string) => {
     const baseItems = [
@@ -78,7 +83,16 @@ const Navigation = () => {
         ))}
       </ul>
 
-      <div className="absolute bottom-6 left-6 right-6">
+      <div className="absolute bottom-6 left-6 right-6 space-y-3">
+        <Button
+          onClick={signOut}
+          variant="outline"
+          size="sm"
+          className="w-full flex items-center gap-2"
+        >
+          <LogOut className="w-4 h-4" />
+          Sign Out
+        </Button>
         <div className="p-4 rounded-lg bg-gradient-subtle border border-glass-border backdrop-blur-sm">
           <p className="text-sm text-muted-foreground mb-2">Need help?</p>
           <button className="text-sm text-accent hover:text-accent/80 transition-colors">

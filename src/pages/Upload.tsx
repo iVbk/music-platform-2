@@ -1,183 +1,306 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Upload as UploadIcon, Music, File, Check } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Upload as UploadIcon, Music, CheckCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "@/hooks/use-toast";
 
 const Upload = () => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [isUploaded, setIsUploaded] = useState(false);
-  const [isDemo, setIsDemo] = useState(false);
+  const [isDemo, setIsDemo] = useState(true);
+  const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [title, setTitle] = useState("");
+  const [genre, setGenre] = useState("");
+  const [description, setDescription] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const { user, profile } = useAuth();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(true);
   };
 
-  const handleDragLeave = () => {
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
     setIsDragOver(false);
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
-    setIsUploaded(true);
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      const file = files[0];
+      if (file.type.startsWith('audio/')) {
+        setAudioFile(file);
+        setIsUploaded(true);
+      } else {
+        toast({
+          title: "Invalid file type",
+          description: "Please upload an audio file",
+          variant: "destructive",
+        });
+      }
+    }
   };
 
-  const genres = [
-    "Electronic", "Hip-Hop", "Pop", "Rock", "Jazz", "Classical", 
-    "R&B", "Country", "Folk", "Ambient", "Experimental", "World"
-  ];
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      if (file.type.startsWith('audio/')) {
+        setAudioFile(file);
+        setIsUploaded(true);
+      } else {
+        toast({
+          title: "Invalid file type",
+          description: "Please upload an audio file",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const uploadToStorage = async (file: File): Promise<string | null> => {
+    if (!user) return null;
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+
+    const { data, error } = await supabase.storage
+      .from('demo-tracks')
+      .upload(fileName, file);
+
+    if (error) {
+      console.error('Storage upload error:', error);
+      return null;
+    }
+
+    return fileName;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!audioFile || !profile || !user) {
+      toast({
+        title: "Error",
+        description: "Please make sure you're logged in and have selected a file",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (profile.role !== 'artist') {
+      toast({
+        title: "Access denied",
+        description: "Only artists can upload demo tracks",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setUploading(true);
+    
+    try {
+      // Upload file to storage
+      const audioUrl = await uploadToStorage(audioFile);
+      
+      if (!audioUrl) {
+        throw new Error('Failed to upload audio file');
+      }
+
+      // Insert demo track record
+      const { error: dbError } = await supabase
+        .from('demo_tracks')
+        .insert({
+          artist_id: profile.id,
+          title,
+          genre,
+          description,
+          audio_url: audioUrl,
+          status: 'pending'
+        });
+
+      if (dbError) {
+        throw dbError;
+      }
+
+      toast({
+        title: "Demo submitted successfully!",
+        description: "Your demo track has been submitted for review. You'll be notified once it's reviewed.",
+      });
+
+      // Reset form
+      setAudioFile(null);
+      setTitle("");
+      setGenre("");
+      setDescription("");
+      setIsUploaded(false);
+      
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Upload failed",
+        description: error.message || "Failed to upload demo track",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-foreground mb-2">My Page - Demo Upload</h1>
-        <p className="text-muted-foreground">Upload your demo tracks for review and potential collaboration</p>
+    <div className="max-w-4xl mx-auto p-6 space-y-8">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold mb-2">My Page - Demo Upload</h1>
+        <p className="text-muted-foreground">Share your music with our development team for review and potential collaboration</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Upload Area */}
-        <Card className="bg-card border-border shadow-card">
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Music className="w-5 h-5 text-accent" />
-              Audio File
+              <Music className="h-5 w-5" />
+              Upload Your Demo
             </CardTitle>
+            <CardDescription>
+              Upload your demo track for review by our team
+            </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-6">
+            <div className="flex items-center space-x-2">
+              <Switch 
+                id="demo-mode" 
+                checked={isDemo}
+                onCheckedChange={setIsDemo}
+              />
+              <Label htmlFor="demo-mode">Demo Track</Label>
+            </div>
+
             <div
-              className={cn(
-                "border-2 border-dashed rounded-lg p-8 text-center transition-all duration-300",
+              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                 isDragOver
-                  ? "border-accent bg-accent/10 shadow-neon"
-                  : "border-border hover:border-accent/50",
-                isUploaded && "border-accent bg-accent/5"
-              )}
+                  ? "border-primary bg-primary/5"
+                  : "border-muted-foreground/25 hover:border-primary/50"
+              }`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
               {isUploaded ? (
-                <div className="space-y-4">
-                  <div className="w-16 h-16 mx-auto bg-gradient-neon rounded-full flex items-center justify-center">
-                    <Check className="w-8 h-8 text-primary-foreground" />
-                  </div>
+                <div className="flex flex-col items-center gap-4">
+                  <CheckCircle className="h-12 w-12 text-green-500" />
                   <div>
-                    <h3 className="font-semibold text-foreground">Track uploaded successfully!</h3>
-                    <p className="text-sm text-muted-foreground">my-awesome-track.mp3 (4.2 MB)</p>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    Replace File
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div className="w-16 h-16 mx-auto bg-secondary rounded-full flex items-center justify-center">
-                    <UploadIcon className="w-8 h-8 text-muted-foreground" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">Drop your audio file here</h3>
-                    <p className="text-sm text-muted-foreground">or click to browse</p>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Supports MP3, WAV, FLAC (max 50MB)
+                    <h3 className="font-semibold">File uploaded successfully!</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {audioFile?.name} - Ready to submit your demo
                     </p>
                   </div>
-                  <Button className="bg-gradient-neon hover:shadow-neon transition-all duration-300">
-                    <File className="w-4 h-4 mr-2" />
-                    Browse Files
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-4">
+                  <UploadIcon className="h-12 w-12 text-muted-foreground" />
+                  <div>
+                    <h3 className="font-semibold">Drop your audio file here</h3>
+                    <p className="text-sm text-muted-foreground">or click to browse</p>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Supported formats: MP3, WAV, FLAC (Max 50MB)
+                    </p>
+                  </div>
+                  <input
+                    type="file"
+                    accept="audio/*"
+                    onChange={handleFileInput}
+                    className="hidden"
+                    id="audio-upload"
+                  />
+                  <Button asChild variant="outline">
+                    <label htmlFor="audio-upload" className="cursor-pointer">
+                      Browse Files
+                    </label>
                   </Button>
                 </div>
               )}
             </div>
-
-            {/* Demo/Full Track Toggle */}
-            <div className="mt-6 p-4 rounded-lg bg-secondary/50">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="demo-toggle" className="text-sm font-medium">
-                    Demo Track
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Upload a preview version to protect your full work
-                  </p>
-                </div>
-                <Switch
-                  id="demo-toggle"
-                  checked={isDemo}
-                  onCheckedChange={setIsDemo}
-                />
-              </div>
-            </div>
           </CardContent>
         </Card>
 
-        {/* Track Details */}
-        <Card className="bg-card border-border shadow-card">
+        <Card>
           <CardHeader>
             <CardTitle>Track Details</CardTitle>
+            <CardDescription>
+              Provide information about your track
+            </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="title">Track Title</Label>
-              <Input 
-                id="title" 
-                placeholder="Enter your track title..."
-                className="bg-input border-border focus:ring-accent"
-              />
-            </div>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Track Title</Label>
+                  <Input 
+                    id="title" 
+                    placeholder="Enter track title" 
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="genre">Genre</Label>
+                  <Select value={genre} onValueChange={setGenre} required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select genre" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {["Pop", "Rock", "Hip Hop", "Electronic", "Jazz", "Classical", "R&B", "Country"].map((genre) => (
+                        <SelectItem key={genre} value={genre.toLowerCase()}>
+                          {genre}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="genre">Genre</Label>
-              <Select>
-                <SelectTrigger className="bg-input border-border">
-                  <SelectValue placeholder="Select a genre" />
-                </SelectTrigger>
-                <SelectContent>
-                  {genres.map((genre) => (
-                    <SelectItem key={genre} value={genre.toLowerCase()}>
-                      {genre}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea 
+                  id="description" 
+                  placeholder="Tell us about your track..."
+                  className="min-h-[100px]"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                placeholder="Describe your track, the vibe you're going for, or what kind of collaboration you're looking for..."
-                className="bg-input border-border focus:ring-accent min-h-[120px]"
-              />
-            </div>
-
-            <div className="space-y-4">
-              <div className="p-4 rounded-lg bg-accent/10 border border-accent/20">
-                <h4 className="font-medium text-accent mb-2">Demo Track Guidelines</h4>
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <h4 className="font-medium mb-2">Demo Track Guidelines</h4>
                 <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• Demo tracks are only viewable by our development team</li>
-                  <li>• Keep demos under 1 minute for initial review</li>
-                  <li>• Full tracks will be requested after approval</li>
-                  <li>• Include your best work that represents your style</li>
+                  <li>• Demo tracks are accessible only to our development/management team</li>
+                  <li>• Please ensure your track is original work</li>
+                  <li>• Include a brief description of your musical style</li>
+                  <li>• High-quality audio files are preferred</li>
                 </ul>
               </div>
-              
+
               <Button 
-                className="w-full bg-gradient-neon hover:shadow-neon transition-all duration-300"
-                disabled={!isUploaded}
+                type="submit"
+                className="w-full"
+                disabled={!isUploaded || uploading || !title || !genre}
               >
-                Submit Demo for Review
+                {uploading ? "Uploading..." : "Submit Demo Track"}
               </Button>
-              <p className="text-xs text-muted-foreground mt-2 text-center">
-                Demo will be reviewed within 3-5 business days
-              </p>
-            </div>
+            </form>
           </CardContent>
         </Card>
       </div>
