@@ -53,20 +53,20 @@ const Auth = () => {
 
       if (data.user && !data.session) {
         toast({
-          title: "Check your email",
-          description: "We've sent you a confirmation link to complete your registration.",
+          title: "メールを確認してください",
+          description: "登録を完了するための確認リンクをメールでお送りしました。",
         });
       } else {
         toast({
-          title: "Welcome to SoundSync!",
-          description: "Your account has been created successfully.",
+          title: "MusicSyncへようこそ！",
+          description: "アカウントが正常に作成されました。",
         });
         navigate("/");
       }
     } catch (error: any) {
       setError(error.message);
       toast({
-        title: "Registration failed",
+        title: "登録に失敗しました",
         description: error.message,
         variant: "destructive",
       });
@@ -89,14 +89,14 @@ const Auth = () => {
       if (error) throw error;
 
       toast({
-        title: "Welcome back!",
-        description: "You've been signed in successfully.",
+        title: "おかえりなさい！",
+        description: "正常にログインしました。",
       });
       navigate("/");
     } catch (error: any) {
       setError(error.message);
       toast({
-        title: "Sign in failed",
+        title: "ログインに失敗しました",
         description: error.message,
         variant: "destructive",
       });
@@ -111,11 +111,11 @@ const Auth = () => {
         <CardHeader className="text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Music className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-bold">SoundSync</h1>
+            <h1 className="text-2xl font-bold">MusicSync</h1>
           </div>
-          <CardTitle>Join Our Music Platform</CardTitle>
+          <CardTitle>印税分配型・新人アーティスト発掘プロジェクト</CardTitle>
           <CardDescription>
-            Connect with artists, arrangers, and engineers to create amazing music together
+            アーティスト、アレンジャー、エンジニアが協力して素晴らしい音楽を制作しましょう
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -127,34 +127,36 @@ const Auth = () => {
           
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              <TabsTrigger value="signin">ログイン</TabsTrigger>
+              <TabsTrigger value="signup">アカウント作成</TabsTrigger>
             </TabsList>
             
             <TabsContent value="signin">
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signin-email">Email</Label>
+                  <Label htmlFor="signin-email">メールアドレス</Label>
                   <Input
                     id="signin-email"
                     type="email"
+                    placeholder="メールアドレスを入力"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signin-password">Password</Label>
+                  <Label htmlFor="signin-password">パスワード</Label>
                   <Input
                     id="signin-password"
                     type="password"
+                    placeholder="パスワードを入力"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Signing in..." : "Sign In"}
+                  {loading ? "ログイン中..." : "ログイン"}
                 </Button>
               </form>
             </TabsContent>
@@ -162,51 +164,59 @@ const Auth = () => {
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="display-name">Display Name</Label>
+                  <Label htmlFor="display-name">表示名</Label>
                   <Input
                     id="display-name"
                     type="text"
+                    placeholder="どのようにお呼びしましょうか？"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="role">Role</Label>
+                  <Label htmlFor="role">役割</Label>
                   <Select value={role} onValueChange={(value: "artist" | "arranger" | "engineer") => setRole(value)}>
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="役割を選択してください" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="artist">Artist</SelectItem>
-                      <SelectItem value="arranger">Arranger</SelectItem>
-                      <SelectItem value="engineer">Engineer</SelectItem>
+                      <SelectItem value="artist">アーティスト</SelectItem>
+                      <SelectItem value="arranger">アレンジャー</SelectItem>
+                      <SelectItem value="engineer">エンジニア</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
+                  <Label htmlFor="signup-email">メールアドレス</Label>
                   <Input
                     id="signup-email"
                     type="email"
+                    placeholder="メールアドレスを入力"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
+                  <Label htmlFor="signup-password">パスワード</Label>
                   <Input
                     id="signup-password"
                     type="password"
+                    placeholder="パスワードを入力"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
                   />
                 </div>
+                <div className="bg-muted/50 p-3 rounded-lg text-sm">
+                  <p className="text-muted-foreground">
+                    ※ 当プロジェクトで制作された楽曲の権利は当社に帰属し、印税はアーティスト、アレンジャー、エンジニア、当社で分配されます。
+                  </p>
+                </div>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Creating account..." : "Create Account"}
+                  {loading ? "アカウント作成中..." : "アカウント作成"}
                 </Button>
               </form>
             </TabsContent>
