@@ -82,22 +82,22 @@ const Search = () => {
   return (
     <div className="p-8 space-y-8">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-foreground mb-2">Search Professionals</h1>
-        <p className="text-muted-foreground">Find arrangers and engineers for your music projects</p>
+        <h1 className="text-4xl font-bold text-foreground mb-2">プロフェッショナル検索</h1>
+        <p className="text-muted-foreground">あなたの音楽プロジェクトのためのアレンジャーとエンジニアを見つけましょう</p>
       </div>
 
       {/* Search and Filters */}
       <Card className="bg-card border-border shadow-card">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <SearchIcon className="w-5 h-5 text-accent" />
-            Search & Filters
-          </CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <SearchIcon className="w-5 h-5 text-accent" />
+              検索とフィルター
+            </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Search</label>
+              <label className="text-sm font-medium">検索</label>
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -107,7 +107,7 @@ const Search = () => {
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium">Role</label>
+              <label className="text-sm font-medium">役割</label>
               <Select value={filterRole} onValueChange={setFilterRole}>
                 <SelectTrigger className="bg-input border-border">
                   <SelectValue />
@@ -121,7 +121,7 @@ const Search = () => {
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium">Genre</label>
+              <label className="text-sm font-medium">ジャンル</label>
               <Select value={filterGenre} onValueChange={setFilterGenre}>
                 <SelectTrigger className="bg-input border-border">
                   <SelectValue />
@@ -145,7 +145,7 @@ const Search = () => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold text-foreground">
-            Search Results ({filteredProfessionals.length})
+            検索結果 ({filteredProfessionals.length}件)
           </h2>
         </div>
 
@@ -206,10 +206,10 @@ const Search = () => {
                 
                 <div className="flex gap-2">
                   <Button className="flex-1 bg-gradient-neon hover:shadow-neon transition-all duration-300">
-                    Contact
+                    連絡する
                   </Button>
                   <Button variant="outline" className="border-accent text-accent hover:bg-accent hover:text-accent-foreground">
-                    View Profile
+                    プロフィールを見る
                   </Button>
                 </div>
               </CardContent>
@@ -221,8 +221,8 @@ const Search = () => {
           <Card className="bg-card border-border shadow-card">
             <CardContent className="p-8 text-center">
               <SearchIcon className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-foreground mb-2">No results found</h3>
-              <p className="text-muted-foreground">Try adjusting your search criteria</p>
+              <h3 className="text-lg font-semibold text-foreground mb-2">検索結果が見つかりません</h3>
+              <p className="text-muted-foreground">検索条件を調整してみてください</p>
             </CardContent>
           </Card>
         )}

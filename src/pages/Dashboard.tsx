@@ -19,15 +19,21 @@ const Dashboard = () => {
 
   return (
     <div className="p-8 space-y-8">
+      {/* Concept Banner */}
+      <div className="bg-gradient-neon rounded-lg p-6 mb-6 text-primary-foreground">
+        <h2 className="text-2xl font-bold mb-2">新人アーティストとアレンジャー・エンジニアを結び、楽曲制作から配信、印税分配まで一元管理</h2>
+        <p className="text-primary-foreground/80">才能ある新人アーティストを発掘し、プロフェッショナルな制作チームとマッチング。すべての楽曲の権利は当社が保有し、印税を適正に分配します。</p>
+      </div>
+
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-4xl font-bold text-foreground mb-2">Welcome back!</h1>
-          <p className="text-muted-foreground">Ready to create something amazing?</p>
+          <h1 className="text-4xl font-bold text-foreground mb-2">おかえりなさい！</h1>
+          <p className="text-muted-foreground">今日も素晴らしい音楽を作りましょう</p>
         </div>
         <Button className="bg-gradient-neon hover:shadow-neon transition-all duration-300">
           <Upload className="w-4 h-4 mr-2" />
-          Upload Track
+          音源アップロード
         </Button>
       </div>
 
@@ -35,41 +41,41 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card className="bg-card border-border shadow-card hover:shadow-elevated transition-all duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Active Projects</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">進行中のプロジェクト</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground">12</div>
-            <p className="text-xs text-accent">+2 this week</p>
+            <p className="text-xs text-accent">今週 +2</p>
           </CardContent>
         </Card>
         
         <Card className="bg-card border-border shadow-card hover:shadow-elevated transition-all duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Earnings</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">総収益</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">$2,847</div>
-            <p className="text-xs text-accent">+$340 this month</p>
+            <div className="text-2xl font-bold text-foreground">¥284,700</div>
+            <p className="text-xs text-accent">今月 +¥34,000</p>
           </CardContent>
         </Card>
         
         <Card className="bg-card border-border shadow-card hover:shadow-elevated transition-all duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Collaborations</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">コラボレーション</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground">8</div>
-            <p className="text-xs text-accent">3 pending review</p>
+            <p className="text-xs text-accent">3件 審査待ち</p>
           </CardContent>
         </Card>
         
         <Card className="bg-card border-border shadow-card hover:shadow-elevated transition-all duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Streams</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">ストリーム数</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground">15.2K</div>
-            <p className="text-xs text-accent">+1.8K this week</p>
+            <p className="text-xs text-accent">今週 +1.8K</p>
           </CardContent>
         </Card>
       </div>
@@ -80,7 +86,7 @@ const Dashboard = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-accent" />
-              Trending Songs
+              人気楽曲
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -114,7 +120,7 @@ const Dashboard = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="w-5 h-5 text-accent" />
-              Top Producers
+              トッププロデューサー
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -137,7 +143,7 @@ const Dashboard = () => {
                   </p>
                 </div>
                 <Button size="sm" variant="outline" className="border-accent text-accent hover:bg-accent hover:text-accent-foreground">
-                  Connect
+                  依頼する
                 </Button>
               </div>
             ))}

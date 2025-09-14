@@ -11,6 +11,8 @@ import Review from "./pages/Review";
 import DemoReview from "./pages/DemoReview";
 import ProductionRooms from "./pages/ProductionRooms";
 import Search from "./pages/Search";
+import Profile from "./pages/Profile";
+import Earnings from "./pages/Earnings";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -86,14 +88,14 @@ const AppRoutes = () => {
       <Route path="/earnings" element={
         <ProtectedRoute>
           <Layout>
-            <Dashboard />
+            <Earnings />
           </Layout>
         </ProtectedRoute>
       } />
       <Route path="/profile" element={
         <ProtectedRoute>
           <Layout>
-            <Dashboard />
+            <Profile />
           </Layout>
         </ProtectedRoute>
       } />

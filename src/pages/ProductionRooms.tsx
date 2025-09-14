@@ -99,8 +99,8 @@ const ProductionRooms = () => {
   return (
     <div className="p-8 h-[calc(100vh-2rem)] flex flex-col">
       <div className="mb-6">
-        <h1 className="text-4xl font-bold text-foreground mb-2">Production Rooms</h1>
-        <p className="text-muted-foreground">Collaborate with your team in real-time</p>
+        <h1 className="text-4xl font-bold text-foreground mb-2">制作ルーム</h1>
+        <p className="text-muted-foreground">チームとリアルタイムでコラボレーション</p>
       </div>
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 min-h-0">
@@ -110,7 +110,7 @@ const ProductionRooms = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MessageSquare className="w-5 h-5 text-accent" />
-                Active Rooms ({rooms.length})
+                アクティブなルーム ({rooms.length})
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
@@ -141,9 +141,9 @@ const ProductionRooms = () => {
                             {statusInfo.text}
                           </Badge>
                           <div className="text-xs text-muted-foreground">
-                            <p>🎤 {room.artist}</p>
-                            <p>🎹 {room.arranger}</p>
-                            <p>🎧 {room.engineer || "待機中..."}</p>
+                            <p>🎤 アーティスト: {room.artist}</p>
+                            <p>🎹 アレンジャー: {room.arranger}</p>
+                            <p>🎧 エンジニア: {room.engineer || "待機中..."}</p>
                           </div>
                           <div className="text-xs text-muted-foreground">
                             <p className="truncate">{room.lastMessage}</p>
@@ -174,7 +174,8 @@ const ProductionRooms = () => {
                   </CardTitle>
                   <div className="flex items-center gap-2">
                     <Users className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">4 members</span>
+                    <span className="text-sm text-muted-foreground">4 メンバー</span>
+                    <Badge variant="outline" className="text-xs">進行中</Badge>
                   </div>
                 </div>
               </CardHeader>
@@ -196,7 +197,7 @@ const ProductionRooms = () => {
                               <Paperclip className="w-4 h-4 text-accent" />
                               <span className="text-sm text-accent">{message.fileName}</span>
                               <Button size="sm" variant="ghost" className="ml-auto text-xs">
-                                Download
+                                ダウンロード
                               </Button>
                             </div>
                           )}
@@ -233,13 +234,13 @@ const ProductionRooms = () => {
           ) : (
             <Card className="bg-card border-border shadow-card h-full">
               <CardContent className="flex items-center justify-center h-full">
-                <div className="text-center space-y-4">
-                  <MessageSquare className="w-16 h-16 text-muted-foreground mx-auto" />
-                  <div>
-                    <h3 className="text-lg font-semibold text-foreground">Select a Production Room</h3>
-                    <p className="text-muted-foreground">Choose a room to start collaborating</p>
+                  <div className="text-center space-y-4">
+                    <MessageSquare className="w-16 h-16 text-muted-foreground mx-auto" />
+                    <div>
+                      <h3 className="text-lg font-semibold text-foreground">制作ルームを選択</h3>
+                      <p className="text-muted-foreground">コラボレーションを開始するルームを選んでください</p>
+                    </div>
                   </div>
-                </div>
               </CardContent>
             </Card>
           )}
