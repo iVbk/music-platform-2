@@ -175,7 +175,25 @@ const ProductionRooms = () => {
                   <div className="flex items-center gap-2">
                     <Users className="w-4 h-4 text-muted-foreground" />
                     <span className="text-sm text-muted-foreground">4 メンバー</span>
-                    <Badge variant="outline" className="text-xs">進行中</Badge>
+                    <Badge variant="outline" className="text-xs">制作中</Badge>
+                  </div>
+                  <div className="mt-2">
+                    <div className="text-xs text-muted-foreground mb-1">進行状況</div>
+                    <div className="w-full bg-secondary rounded-full h-2">
+                      <div className="bg-gradient-neon h-2 rounded-full" style={{ width: "65%" }}></div>
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">65% 完了</div>
+                  </div>
+                  <div className="mt-3 space-y-1 text-xs">
+                    <div className="p-2 bg-secondary/30 rounded">
+                      <div className="flex items-center justify-between">
+                        <span>標準ライセンス契約（70%/15%/15%）</span>
+                        <Badge variant="outline" className="text-xs">承認待ち</Badge>
+                      </div>
+                      <Button size="sm" variant="outline" className="mt-2 text-xs">
+                        契約内容を確認
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </CardHeader>

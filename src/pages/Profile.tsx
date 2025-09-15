@@ -7,14 +7,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Upload, Music, Star, Calendar, MapPin, Edit, Save } from "lucide-react";
+import { Upload, Music, Star, Calendar, MapPin, Edit, Save, Play, BarChart3 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Profile = () => {
   const { profile } = useAuth();
+  const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [displayName, setDisplayName] = useState(profile?.display_name || "");
   const [bio, setBio] = useState(profile?.bio || "");
+  const [demoFile, setDemoFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const mockProjects = [
     {
@@ -24,7 +29,8 @@ const Profile = () => {
       role: "アレンジャー",
       status: "完成",
       date: "2024-01",
-      streams: "15.2K"
+      streams: "15,200",
+      royalty: "¥12,350"
     },
     {
       id: 2,
@@ -33,9 +39,62 @@ const Profile = () => {
       role: "エンジニア",
       status: "制作中",
       date: "2024-02",
-      streams: "8.5K"
+      streams: "8,500",
+      royalty: "¥6,800"
+    },
+    {
+      id: 3,
+      title: "Silent Waves",
+      artist: "新人アーティスト C", 
+      role: "アレンジャー",
+      status: "完成",
+      date: "2023-12",
+      streams: "23,100",
+      royalty: "¥18,480"
+    },
+    {
+      id: 4,
+      title: "Digital Rain",
+      artist: "新人アーティスト D", 
+      role: "エンジニア",
+      status: "配信中",
+      date: "2024-03",
+      streams: "31,750",
+      royalty: "¥25,400"
     }
   ];
+
+  const handleDemoUpload = async () => {
+    if (!demoFile || !profile) return;
+
+    setUploading(true);
+    try {
+      const fileExt = demoFile.name.split('.').pop();
+      const fileName = `demo_${profile.id}_${Date.now()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('demo-tracks')
+        .upload(fileName, demoFile);
+
+      if (uploadError) throw uploadError;
+
+      toast({
+        title: "アップロード完了",
+        description: "デモ音源がアップロードされました。審査をお待ちください。",
+      });
+      
+      setDemoFile(null);
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "アップロードエラー",
+        description: "ファイルのアップロードに失敗しました。",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const getRoleLabel = (role: string) => {
     const labels = {
@@ -136,15 +195,39 @@ const Profile = () => {
                 <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-4 text-center">
                   <Music className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
                   <p className="text-sm text-muted-foreground mb-2">
-                    デモ音源をアップロード
+                    {demoFile ? demoFile.name : "デモ音源をアップロード"}
                   </p>
-                  <p className="text-xs text-accent">
-                    ※ 社内のみ視聴可能
+                  <p className="text-xs text-accent mb-3">
+                    ※ アップロードされたデモ音源は社内のみ視聴可能です
                   </p>
-                  <Button size="sm" variant="outline" className="mt-2">
-                    <Upload className="w-3 h-3 mr-1" />
-                    ファイルを選択
-                  </Button>
+                  <div className="space-y-2">
+                    <input
+                      type="file"
+                      accept="audio/*"
+                      onChange={(e) => setDemoFile(e.target.files?.[0] || null)}
+                      className="hidden"
+                      id="demo-upload"
+                    />
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => document.getElementById('demo-upload')?.click()}
+                      disabled={uploading}
+                    >
+                      <Upload className="w-3 h-3 mr-1" />
+                      ファイルを選択
+                    </Button>
+                    {demoFile && (
+                      <Button 
+                        size="sm" 
+                        className="bg-gradient-neon hover:shadow-neon" 
+                        onClick={handleDemoUpload}
+                        disabled={uploading}
+                      >
+                        {uploading ? "アップロード中..." : "アップロード"}
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
@@ -154,9 +237,12 @@ const Profile = () => {
         {/* Content Tabs */}
         <div className="lg:col-span-2">
           <Tabs defaultValue="projects" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="projects">制作実績</TabsTrigger>
               <TabsTrigger value="achievements">実績・評価</TabsTrigger>
+              {(profile?.role === "arranger" || profile?.role === "engineer") && (
+                <TabsTrigger value="history">過去の制作履歴</TabsTrigger>
+              )}
             </TabsList>
 
             <TabsContent value="projects" className="space-y-4">
@@ -192,8 +278,9 @@ const Profile = () => {
                               </Badge>
                             </div>
                           </div>
-                          <div className="text-right">
+                          <div className="text-right space-y-1">
                             <p className="text-sm font-medium">{project.streams} streams</p>
+                            <p className="text-xs text-accent font-medium">{project.royalty}</p>
                             <p className="text-xs text-muted-foreground">{project.date}</p>
                           </div>
                         </div>
@@ -258,6 +345,60 @@ const Profile = () => {
                 </CardContent>
               </Card>
             </TabsContent>
+
+            {(profile?.role === "arranger" || profile?.role === "engineer") && (
+              <TabsContent value="history" className="space-y-4">
+                <Card className="bg-card border-border shadow-card">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <BarChart3 className="w-5 h-5 text-accent" />
+                      過去の制作履歴
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {mockProjects.map((project) => (
+                        <div
+                          key={project.id}
+                          className="flex items-center justify-between p-4 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-lg bg-gradient-neon flex items-center justify-center">
+                              <Music className="w-6 h-6 text-primary-foreground" />
+                            </div>
+                            <div className="space-y-1">
+                              <h4 className="font-semibold">{project.title}</h4>
+                              <p className="text-sm text-muted-foreground">
+                                by {project.artist}
+                              </p>
+                              <div className="flex items-center gap-2">
+                                <Badge variant="outline" className="text-xs">
+                                  {project.role}
+                                </Badge>
+                                <Badge
+                                  variant={project.status === "完成" ? "default" : "secondary"}
+                                  className="text-xs"
+                                >
+                                  {project.status}
+                                </Badge>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right space-y-1">
+                            <div className="flex items-center gap-2">
+                              <Play className="w-4 h-4 text-muted-foreground" />
+                              <span className="text-sm font-medium">{project.streams}</span>
+                            </div>
+                            <p className="text-sm text-accent font-medium">{project.royalty}</p>
+                            <p className="text-xs text-muted-foreground">{project.date}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            )}
           </Tabs>
         </div>
       </div>

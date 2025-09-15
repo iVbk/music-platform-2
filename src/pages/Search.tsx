@@ -4,12 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search as SearchIcon, Music, Star, MapPin, Calendar } from "lucide-react";
+import { Search as SearchIcon, Music, Star, MapPin, Calendar, Filter, TrendingUp, Users } from "lucide-react";
 
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterRole, setFilterRole] = useState("all");
   const [filterGenre, setFilterGenre] = useState("all");
+  const [sortBy, setSortBy] = useState("rating");
 
   const professionals = [
     {
@@ -19,6 +20,7 @@ const Search = () => {
       specialties: ["Electronic", "Pop", "Ambient"],
       rating: 4.9,
       projects: 47,
+      yearsExperience: 10,
       location: "東京",
       bio: "10年以上の経験を持つアレンジャーです。エレクトロニックミュージックを得意としています。",
       joinDate: "2022-03",
@@ -31,6 +33,7 @@ const Search = () => {
       specialties: ["Hip-Hop", "R&B", "Jazz"],
       rating: 4.8,
       projects: 52,
+      yearsExperience: 8,
       location: "大阪",
       bio: "Grammy受賞エンジニアのアシスタント経験があります。ミックス・マスタリング専門。",
       joinDate: "2021-11",
@@ -43,6 +46,7 @@ const Search = () => {
       specialties: ["Rock", "Metal", "Alternative"],
       rating: 4.7,
       projects: 38,
+      yearsExperience: 5,
       location: "福岡",
       bio: "バンド活動の経験を活かしたロックアレンジが得意です。",
       joinDate: "2023-01",
@@ -55,6 +59,7 @@ const Search = () => {
       specialties: ["Classical", "Orchestral", "World"],
       rating: 4.6,
       projects: 31,
+      yearsExperience: 12,
       location: "京都",
       bio: "オーケストラレコーディング専門。アコースティック楽器の録音が得意。",
       joinDate: "2022-08",
@@ -70,14 +75,29 @@ const Search = () => {
     return labels[role as keyof typeof labels] || role;
   };
 
-  const filteredProfessionals = professionals.filter(prof => {
-    const matchesSearch = prof.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         prof.specialties.some(s => s.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesRole = filterRole === "all" || prof.role === filterRole;
-    const matchesGenre = filterGenre === "all" || prof.specialties.some(s => s === filterGenre);
-    
-    return matchesSearch && matchesRole && matchesGenre;
-  });
+  const filteredAndSortedProfessionals = professionals
+    .filter(prof => {
+      const matchesSearch = prof.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           prof.specialties.some(s => s.toLowerCase().includes(searchQuery.toLowerCase()));
+      const matchesRole = filterRole === "all" || prof.role === filterRole;
+      const matchesGenre = filterGenre === "all" || prof.specialties.some(s => s === filterGenre);
+      
+      return matchesSearch && matchesRole && matchesGenre;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "rating":
+          return b.rating - a.rating;
+        case "projects":
+          return b.projects - a.projects;
+        case "experience":
+          return b.yearsExperience - a.yearsExperience;
+        case "name":
+          return a.name.localeCompare(b.name);
+        default:
+          return 0;
+      }
+    });
 
   return (
     <div className="p-8 space-y-8">
@@ -95,7 +115,7 @@ const Search = () => {
             </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">検索</label>
               <Input
@@ -137,6 +157,21 @@ const Search = () => {
                 </SelectContent>
               </Select>
             </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">並べ替え</label>
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="bg-input border-border">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="rating">評価順</SelectItem>
+                  <SelectItem value="projects">プロジェクト数順</SelectItem>
+                  <SelectItem value="experience">経験年数順</SelectItem>
+                  <SelectItem value="name">名前順</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -145,12 +180,19 @@ const Search = () => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold text-foreground">
-            検索結果 ({filteredProfessionals.length}件)
+            検索結果 ({filteredAndSortedProfessionals.length}件)
           </h2>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Filter className="w-4 h-4" />
+            {sortBy === "rating" && "評価順"}
+            {sortBy === "projects" && "プロジェクト数順"}
+            {sortBy === "experience" && "経験年数順"}
+            {sortBy === "name" && "名前順"}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredProfessionals.map((professional) => (
+          {filteredAndSortedProfessionals.map((professional) => (
             <Card key={professional.id} className="bg-card border-border shadow-card hover:shadow-elevated transition-all duration-300">
               <CardHeader>
                 <div className="flex items-start justify-between">
@@ -172,12 +214,19 @@ const Search = () => {
                       </Badge>
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right space-y-1">
                     <div className="flex items-center gap-1">
                       <Star className="w-4 h-4 text-yellow-500" />
                       <span className="text-sm font-medium">{professional.rating}</span>
                     </div>
-                    <p className="text-xs text-muted-foreground">{professional.projects} projects</p>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Users className="w-3 h-3" />
+                      <span>{professional.projects} projects</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <TrendingUp className="w-3 h-3" />
+                      <span>{professional.yearsExperience}年経験</span>
+                    </div>
                   </div>
                 </div>
               </CardHeader>
@@ -217,7 +266,7 @@ const Search = () => {
           ))}
         </div>
 
-        {filteredProfessionals.length === 0 && (
+        {filteredAndSortedProfessionals.length === 0 && (
           <Card className="bg-card border-border shadow-card">
             <CardContent className="p-8 text-center">
               <SearchIcon className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
