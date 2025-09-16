@@ -3,48 +3,51 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TrendingUp, DollarSign, Music, Calendar, AlertTriangle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Earnings = () => {
+  const { t } = useTranslation();
+
   const royaltyBreakdown = [
-    { role: "アーティスト", percentage: 70, amount: 84500, color: "bg-gradient-to-r from-blue-500 to-purple-500" },
-    { role: "アレンジャー", percentage: 15, amount: 18150, color: "bg-gradient-to-r from-green-500 to-teal-500" },
-    { role: "エンジニア", percentage: 15, amount: 18150, color: "bg-gradient-to-r from-orange-500 to-red-500" }
+    { role: t("earnings.artist"), percentage: 70, amount: 84500, color: "bg-gradient-to-r from-blue-500 to-purple-500" },
+    { role: t("earnings.arranger"), percentage: 15, amount: 18150, color: "bg-gradient-to-r from-green-500 to-teal-500" },
+    { role: t("earnings.engineer"), percentage: 15, amount: 18150, color: "bg-gradient-to-r from-orange-500 to-red-500" }
   ];
 
   const monthlyEarnings = [
-    { month: "2024年1月", amount: 12500, streams: 15200 },
-    { month: "2024年2月", amount: 18200, streams: 22100 },
-    { month: "2024年3月", amount: 25800, streams: 31500 },
-    { month: "2024年4月", amount: 34000, streams: 41200 }
+    { month: t("earnings.month1"), amount: 12500, streams: 15200 },
+    { month: t("earnings.month2"), amount: 18200, streams: 22100 },
+    { month: t("earnings.month3"), amount: 25800, streams: 31500 },
+    { month: t("earnings.month4"), amount: 34000, streams: 41200 }
   ];
 
   const tracks = [
     {
       id: 1,
       title: "Midnight Dreams",
-      artist: "新人アーティスト A",
+      artist: t("earnings.newArtistA"),
       streams: 15200,
       earnings: 18400,
       royalty: 70,
-      status: "配信中"
+      status: t("earnings.streaming")
     },
     {
       id: 2,
       title: "Urban Flow",
-      artist: "新人アーティスト B",
+      artist: t("earnings.newArtistB"),
       streams: 8500,
       earnings: 10200,
       royalty: 15,
-      status: "配信中"
+      status: t("earnings.streaming")
     },
     {
       id: 3,
       title: "Silent Waves",
-      artist: "新人アーティスト C",
+      artist: t("earnings.newArtistC"),
       streams: 12800,
       earnings: 15200,
       royalty: 15,
-      status: "配信中"
+      status: t("earnings.streaming")
     }
   ];
 
@@ -53,8 +56,8 @@ const Earnings = () => {
   return (
     <div className="p-8 space-y-8">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-foreground mb-2">収益管理</h1>
-        <p className="text-muted-foreground">印税分配と収益の詳細を確認しましょう</p>
+        <h1 className="text-4xl font-bold text-foreground mb-2">{t("earnings.title")}</h1>
+        <p className="text-muted-foreground">{t("earnings.subtitle")}</p>
       </div>
 
       {/* Important Notice */}
@@ -63,11 +66,8 @@ const Earnings = () => {
           <div className="flex items-start gap-3">
             <AlertTriangle className="w-5 h-5 text-accent mt-1" />
             <div>
-              <h3 className="font-semibold text-foreground mb-2">重要なお知らせ</h3>
-              <p className="text-sm text-muted-foreground">
-                本アプリで制作されたすべての楽曲の権利は当社に帰属します。印税は配信収益に基づいて分配され、
-                アーティスト、アレンジャー、エンジニアの貢献度に応じて適正に配分されます。
-              </p>
+              <h3 className="font-semibold text-foreground mb-2">{t("earnings.noticeTitle")}</h3>
+              <p className="text-sm text-muted-foreground">{t("earnings.noticeBody")}</p>
             </div>
           </div>
         </CardContent>
@@ -77,41 +77,41 @@ const Earnings = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card className="bg-card border-border shadow-card">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">総収益</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t("earnings.totalEarnings")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground">¥{totalEarnings.toLocaleString()}</div>
-            <p className="text-xs text-accent">今月 +¥34,000</p>
+            <p className="text-xs text-accent">{t("earnings.thisMonthChange", { amount: "¥34,000" })}</p>
           </CardContent>
         </Card>
         
         <Card className="bg-card border-border shadow-card">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">今月の収益</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t("earnings.thisMonth")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground">¥34,000</div>
-            <p className="text-xs text-accent">先月比 +32%</p>
+            <p className="text-xs text-accent">{t("earnings.vsLastMonth", { percent: "+32%" })}</p>
           </CardContent>
         </Card>
         
         <Card className="bg-card border-border shadow-card">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">総ストリーム数</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t("earnings.totalStreams")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground">125.8K</div>
-            <p className="text-xs text-accent">今月 +18.2K</p>
+            <p className="text-xs text-accent">{t("earnings.thisMonthChange", { amount: "+18.2K" })}</p>
           </CardContent>
         </Card>
         
         <Card className="bg-card border-border shadow-card">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">平均印税率</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t("earnings.avgRoyaltyRate")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground">16.5%</div>
-            <p className="text-xs text-muted-foreground">あなたのシェア</p>
+            <p className="text-xs text-muted-foreground">{t("earnings.yourShare")}</p>
           </CardContent>
         </Card>
       </div>
@@ -122,7 +122,7 @@ const Earnings = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <DollarSign className="w-5 h-5 text-accent" />
-              印税分配の内訳
+              {t("earnings.royaltyBreakdown")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -143,7 +143,7 @@ const Earnings = () => {
             ))}
             <div className="pt-4 border-t border-border">
               <div className="flex items-center justify-between font-semibold">
-                <span>合計</span>
+                <span>{t("earnings.total")}</span>
                 <span>¥{totalEarnings.toLocaleString()}</span>
               </div>
             </div>
@@ -155,7 +155,7 @@ const Earnings = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-accent" />
-              月別収益推移
+              {t("earnings.monthlyTrend")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -169,10 +169,7 @@ const Earnings = () => {
                   <div className="text-right">
                     <p className="font-semibold">¥{month.amount.toLocaleString()}</p>
                     <Badge variant="secondary" className="text-xs mt-1">
-                      {index > 0 ? 
-                        `+${Math.round(((month.amount - monthlyEarnings[index-1].amount) / monthlyEarnings[index-1].amount) * 100)}%` 
-                        : 'New'
-                      }
+                      {index > 0 ? `+${Math.round(((month.amount - monthlyEarnings[index-1].amount) / monthlyEarnings[index-1].amount) * 100)}%` : t("earnings.new")}
                     </Badge>
                   </div>
                 </div>
@@ -187,15 +184,15 @@ const Earnings = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Music className="w-5 h-5 text-accent" />
-            楽曲別収益詳細
+            {t("earnings.byTrack")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="all" className="space-y-4">
             <TabsList>
-              <TabsTrigger value="all">すべて</TabsTrigger>
-              <TabsTrigger value="streaming">配信中</TabsTrigger>
-              <TabsTrigger value="pending">準備中</TabsTrigger>
+              <TabsTrigger value="all">{t("earnings.all")}</TabsTrigger>
+              <TabsTrigger value="streaming">{t("earnings.streaming")}</TabsTrigger>
+              <TabsTrigger value="pending">{t("earnings.pending")}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="all" className="space-y-4">
@@ -206,7 +203,7 @@ const Earnings = () => {
                     <p className="text-sm text-muted-foreground">by {track.artist}</p>
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="text-xs">
-                        印税 {track.royalty}%
+                        {t("earnings.royalty")} {track.royalty}%
                       </Badge>
                       <Badge variant="secondary" className="text-xs">
                         {track.status}
@@ -218,7 +215,7 @@ const Earnings = () => {
                     <p className="text-sm text-muted-foreground">{track.streams.toLocaleString()} streams</p>
                     <div className="flex items-center gap-1 mt-1">
                       <Calendar className="w-3 h-3 text-muted-foreground" />
-                      <span className="text-xs text-muted-foreground">4月分</span>
+                      <span className="text-xs text-muted-foreground">{t("earnings.april")}</span>
                     </div>
                   </div>
                 </div>
@@ -228,16 +225,16 @@ const Earnings = () => {
             <TabsContent value="streaming">
               <div className="text-center py-8">
                 <Music className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">配信中の楽曲</h3>
-                <p className="text-muted-foreground">現在配信されている楽曲の収益データです</p>
+                <h3 className="text-lg font-semibold text-foreground mb-2">{t("earnings.streamingTracks")}</h3>
+                <p className="text-muted-foreground">{t("earnings.streamingDesc")}</p>
               </div>
             </TabsContent>
 
             <TabsContent value="pending">
               <div className="text-center py-8">
                 <Calendar className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">配信準備中</h3>
-                <p className="text-muted-foreground">配信準備中の楽曲はまだ収益が発生していません</p>
+                <h3 className="text-lg font-semibold text-foreground mb-2">{t("earnings.preparing")}</h3>
+                <p className="text-muted-foreground">{t("earnings.preparingDesc")}</p>
               </div>
             </TabsContent>
           </Tabs>

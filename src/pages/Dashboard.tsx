@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import WaveformVisualizer from "@/components/WaveformVisualizer";
 import { Upload, Play, Heart, TrendingUp, Users, Music } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Dashboard = () => {
   const trendingSongs = [
@@ -17,23 +18,25 @@ const Dashboard = () => {
     { name: "David Chen", specialties: ["Ambient", "Cinematic"], rating: 4.7, projects: 38 },
   ];
 
+  const { t } = useTranslation();
+
   return (
     <div className="p-8 space-y-8">
       {/* Concept Banner */}
       <div className="bg-gradient-neon rounded-lg p-6 mb-6 text-primary-foreground">
-        <h2 className="text-2xl font-bold mb-2">新人アーティストとアレンジャー・エンジニアを結び、楽曲制作から配信、印税分配まで一元管理</h2>
-        <p className="text-primary-foreground/80">才能ある新人アーティストを発掘し、プロフェッショナルな制作チームとマッチング。すべての楽曲の権利は当社が保有し、印税を適正に分配します。</p>
+        <h2 className="text-2xl font-bold mb-2">{t("dashboard.bannerTitle")}</h2>
+        <p className="text-primary-foreground/80">{t("dashboard.bannerDesc")}</p>
       </div>
 
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-4xl font-bold text-foreground mb-2">おかえりなさい！</h1>
-          <p className="text-muted-foreground">今日も素晴らしい音楽を作りましょう</p>
+          <h1 className="text-4xl font-bold text-foreground mb-2">{t("dashboard.welcome")}</h1>
+          <p className="text-muted-foreground">{t("dashboard.makeMusicToday")}</p>
         </div>
         <Button className="bg-gradient-neon hover:shadow-neon transition-all duration-300">
           <Upload className="w-4 h-4 mr-2" />
-          音源アップロード
+          {t("dashboard.uploadAudio")}
         </Button>
       </div>
 
@@ -41,41 +44,41 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card className="bg-card border-border shadow-card hover:shadow-elevated transition-all duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">進行中のプロジェクト</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t("dashboard.projects")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground">12</div>
-            <p className="text-xs text-accent">今週 +2</p>
+            <p className="text-xs text-accent">{t("dashboard.thisWeekChange", { count: 2 })}</p>
           </CardContent>
         </Card>
         
         <Card className="bg-card border-border shadow-card hover:shadow-elevated transition-all duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">総収益</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t("dashboard.totalEarnings")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground">¥284,700</div>
-            <p className="text-xs text-accent">今月 +¥34,000</p>
+            <p className="text-xs text-accent">{t("dashboard.thisMonthChange", { amount: "¥34,000" })}</p>
           </CardContent>
         </Card>
         
         <Card className="bg-card border-border shadow-card hover:shadow-elevated transition-all duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">コラボレーション</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t("dashboard.collaborations")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground">8</div>
-            <p className="text-xs text-accent">3件 審査待ち</p>
+            <p className="text-xs text-accent">{t("dashboard.pendingReviews", { count: 3 })}</p>
           </CardContent>
         </Card>
         
         <Card className="bg-card border-border shadow-card hover:shadow-elevated transition-all duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">ストリーム数</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t("dashboard.streams")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground">15.2K</div>
-            <p className="text-xs text-accent">今週 +1.8K</p>
+            <p className="text-xs text-accent">{t("dashboard.thisWeekChange", { count: "1.8K" })}</p>
           </CardContent>
         </Card>
       </div>
@@ -86,7 +89,7 @@ const Dashboard = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-accent" />
-              人気楽曲
+              {t("dashboard.trendingSongs")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -120,7 +123,7 @@ const Dashboard = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="w-5 h-5 text-accent" />
-              トッププロデューサー
+              {t("dashboard.topProducers")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -143,7 +146,7 @@ const Dashboard = () => {
                   </p>
                 </div>
                 <Button size="sm" variant="outline" className="border-accent text-accent hover:bg-accent hover:text-accent-foreground">
-                  依頼する
+                  {t("dashboard.hire")}
                 </Button>
               </div>
             ))}

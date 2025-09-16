@@ -13,8 +13,11 @@ import ProductionRooms from "./pages/ProductionRooms";
 import Search from "./pages/Search";
 import Profile from "./pages/Profile";
 import Earnings from "./pages/Earnings";
+import Chat from "./pages/Chat";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import { I18nextProvider } from "react-i18next";
+import i18n from "./i18n";
 
 const queryClient = new QueryClient();
 
@@ -78,6 +81,13 @@ const AppRoutes = () => {
           </Layout>
         </ProtectedRoute>
       } />
+      <Route path="/chat" element={
+        <ProtectedRoute>
+          <Layout>
+            <Chat />
+          </Layout>
+        </ProtectedRoute>
+      } />
       <Route path="/search" element={
         <ProtectedRoute>
           <Layout>
@@ -134,17 +144,19 @@ const AppRoutes = () => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+  <I18nextProvider i18n={i18n}>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  </I18nextProvider>
 );
 
 export default App;

@@ -10,6 +10,7 @@ import { Upload as UploadIcon, Music, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 const Upload = () => {
   const [isDragOver, setIsDragOver] = useState(false);
@@ -21,6 +22,8 @@ const Upload = () => {
   const [description, setDescription] = useState("");
   const [uploading, setUploading] = useState(false);
   const { user, profile } = useAuth();
+
+  const { t } = useTranslation();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -44,8 +47,8 @@ const Upload = () => {
         setIsUploaded(true);
       } else {
         toast({
-          title: "無効なファイル形式",
-          description: "音声ファイルをアップロードしてください",
+          title: t("upload.invalidFileTitle"),
+          description: t("upload.invalidFileDesc"),
           variant: "destructive",
         });
       }
@@ -61,8 +64,8 @@ const Upload = () => {
         setIsUploaded(true);
       } else {
         toast({
-          title: "無効なファイル形式",
-          description: "音声ファイルをアップロードしてください",
+          title: t("upload.invalidFileTitle"),
+          description: t("upload.invalidFileDesc"),
           variant: "destructive",
         });
       }
@@ -92,8 +95,8 @@ const Upload = () => {
     
     if (!audioFile || !profile || !user) {
       toast({
-        title: "エラー",
-        description: "ログインしてファイルを選択してください",
+        title: t("common.error"),
+        description: t("upload.loginSelectFile"),
         variant: "destructive",
       });
       return;
@@ -101,8 +104,8 @@ const Upload = () => {
 
     if (profile.role !== 'artist') {
       toast({
-        title: "アクセス拒否",
-        description: "デモ音源のアップロードはアーティストのみ可能です",
+        title: t("common.accessDenied"),
+        description: t("upload.artistOnly"),
         variant: "destructive",
       });
       return;
@@ -115,7 +118,7 @@ const Upload = () => {
       const audioUrl = await uploadToStorage(audioFile);
       
       if (!audioUrl) {
-        throw new Error('音声ファイルのアップロードに失敗しました');
+        throw new Error(t("upload.fileUploadFailed"));
       }
 
       // Insert demo track record
@@ -135,8 +138,8 @@ const Upload = () => {
       }
 
       toast({
-        title: "デモ音源を送信しました！",
-        description: "デモ音源が審査のために送信されました。審査完了後にお知らせします。",
+        title: t("upload.submittedTitle"),
+        description: t("upload.submittedDesc"),
       });
 
       // Reset form
@@ -149,8 +152,8 @@ const Upload = () => {
     } catch (error: any) {
       console.error('Upload error:', error);
       toast({
-        title: "アップロード失敗",
-        description: error.message || "デモ音源のアップロードに失敗しました",
+        title: t("upload.uploadFailedTitle"),
+        description: (error as any).message || t("upload.uploadFailedDesc"),
         variant: "destructive",
       });
     } finally {
@@ -161,8 +164,8 @@ const Upload = () => {
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
       <div className="text-center">
-        <h1 className="text-3xl font-bold mb-2">マイページ - デモ音源アップロード</h1>
-        <p className="text-muted-foreground">開発チームによる審査・コラボレーションのために、あなたの音楽をシェアしてください</p>
+        <h1 className="text-3xl font-bold mb-2">{t("upload.title")}</h1>
+        <p className="text-muted-foreground">{t("upload.subtitle")}</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -170,10 +173,10 @@ const Upload = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Music className="h-5 w-5" />
-              デモ音源をアップロード
+              {t("upload.cardTitle")}
             </CardTitle>
             <CardDescription>
-              開発チームによる審査のためにデモ音源をアップロードしてください
+              {t("upload.cardDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -183,7 +186,7 @@ const Upload = () => {
                 checked={isDemo}
                 onCheckedChange={setIsDemo}
               />
-              <Label htmlFor="demo-mode">デモ音源</Label>
+              <Label htmlFor="demo-mode">{t("upload.demoToggle")}</Label>
             </div>
 
             <div
@@ -200,9 +203,9 @@ const Upload = () => {
                 <div className="flex flex-col items-center gap-4">
                   <CheckCircle className="h-12 w-12 text-green-500" />
                   <div>
-                    <h3 className="font-semibold">ファイルのアップロードが完了しました！</h3>
+                    <h3 className="font-semibold">{t("upload.fileReady")}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {audioFile?.name} - デモ音源を送信する準備ができました
+                      {audioFile?.name} - {t("upload.readyToSend")}
                     </p>
                   </div>
                 </div>
@@ -210,10 +213,10 @@ const Upload = () => {
                 <div className="flex flex-col items-center gap-4">
                   <UploadIcon className="h-12 w-12 text-muted-foreground" />
                   <div>
-                    <h3 className="font-semibold">音声ファイルをここにドロップ</h3>
-                    <p className="text-sm text-muted-foreground">またはクリックして選択</p>
+                    <h3 className="font-semibold">{t("upload.dropHere")}</h3>
+                    <p className="text-sm text-muted-foreground">{t("upload.orClick")}</p>
                     <p className="text-xs text-muted-foreground mt-2">
-                      対応形式: MP3, WAV, FLAC（最大50MB）
+                      {t("upload.supportedFormats")}
                     </p>
                   </div>
                   <input
@@ -225,7 +228,7 @@ const Upload = () => {
                   />
                   <Button asChild variant="outline">
                     <label htmlFor="audio-upload" className="cursor-pointer">
-                      ファイルを選択
+                      {t("upload.chooseFile")}
                     </label>
                   </Button>
                 </div>
@@ -236,19 +239,19 @@ const Upload = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>楽曲詳細</CardTitle>
+            <CardTitle>{t("upload.detailsTitle")}</CardTitle>
             <CardDescription>
-              楽曲に関する情報を入力してください
+              {t("upload.detailsDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="title">楽曲タイトル</Label>
+                  <Label htmlFor="title">{t("upload.songTitle")}</Label>
                   <Input 
                     id="title" 
-                    placeholder="楽曲タイトルを入力" 
+                    placeholder={t("upload.songTitlePlaceholder") || undefined}
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     required
@@ -256,13 +259,13 @@ const Upload = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="genre">ジャンル</Label>
+                  <Label htmlFor="genre">{t("upload.genre")}</Label>
                   <Select value={genre} onValueChange={setGenre} required>
                     <SelectTrigger>
-                      <SelectValue placeholder="ジャンルを選択" />
+                      <SelectValue placeholder={t("upload.genrePlaceholder") || undefined} />
                     </SelectTrigger>
                     <SelectContent>
-                      {["ポップス", "ロック", "ヒップホップ", "エレクトロニック", "ジャズ", "クラシック", "R&B", "カントリー"].map((genreItem) => (
+                      {["Pop", "Rock", "Hip-Hop", "Electronic", "Jazz", "Classical", "R&B", "Country"].map((genreItem) => (
                         <SelectItem key={genreItem} value={genreItem.toLowerCase()}>
                           {genreItem}
                         </SelectItem>
@@ -273,10 +276,10 @@ const Upload = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">楽曲について</Label>
+                <Label htmlFor="description">{t("upload.aboutSong")}</Label>
                 <Textarea 
                   id="description" 
-                  placeholder="楽曲について教えてください..."
+                  placeholder={t("upload.aboutSongPlaceholder") || undefined}
                   className="min-h-[100px]"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -284,13 +287,13 @@ const Upload = () => {
               </div>
 
               <div className="bg-muted/50 p-4 rounded-lg">
-                <h4 className="font-medium mb-2">デモ音源ガイドライン</h4>
+                <h4 className="font-medium mb-2">{t("upload.guidelinesTitle")}</h4>
                 <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• デモ音源は開発・マネジメントチームのみがアクセス可能です</li>
-                  <li>• オリジナル楽曲であることを確認してください</li>
-                  <li>• 音楽スタイルについて簡潔に説明してください</li>
-                  <li>• 高音質の音声ファイルを推奨します</li>
-                  <li>• 楽曲の権利は当社に帰属し、印税分配の対象となります</li>
+                  <li>• {t("upload.guideline1")}</li>
+                  <li>• {t("upload.guideline2")}</li>
+                  <li>• {t("upload.guideline3")}</li>
+                  <li>• {t("upload.guideline4")}</li>
+                  <li>• {t("upload.guideline5")}</li>
                 </ul>
               </div>
 
@@ -299,7 +302,7 @@ const Upload = () => {
                 className="w-full"
                 disabled={!isUploaded || uploading || !title || !genre}
               >
-                {uploading ? "アップロード中..." : "デモ音源を送信"}
+                {uploading ? t("upload.uploading") : t("upload.submitDemo")}
               </Button>
             </form>
           </CardContent>

@@ -11,10 +11,12 @@ import { Upload, Music, Star, Calendar, MapPin, Edit, Save, Play, BarChart3 } fr
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 const Profile = () => {
   const { profile } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [displayName, setDisplayName] = useState(profile?.display_name || "");
   const [bio, setBio] = useState(profile?.bio || "");
@@ -79,16 +81,16 @@ const Profile = () => {
       if (uploadError) throw uploadError;
 
       toast({
-        title: "アップロード完了",
-        description: "デモ音源がアップロードされました。審査をお待ちください。",
+        title: t("profile.uploadComplete"),
+        description: t("profile.uploadCompleteDesc"),
       });
       
       setDemoFile(null);
     } catch (error) {
       console.error('Upload error:', error);
       toast({
-        title: "アップロードエラー",
-        description: "ファイルのアップロードに失敗しました。",
+        title: t("profile.uploadError"),
+        description: t("profile.uploadErrorDesc"),
         variant: "destructive",
       });
     } finally {
@@ -97,20 +99,20 @@ const Profile = () => {
   };
 
   const getRoleLabel = (role: string) => {
-    const labels = {
-      artist: "アーティスト",
-      arranger: "アレンジャー",
-      engineer: "エンジニア",
-      admin: "管理者"
+    const labels: Record<string, string> = {
+      artist: t("profile.role.artist"),
+      arranger: t("profile.role.arranger"),
+      engineer: t("profile.role.engineer"),
+      admin: t("profile.role.admin"),
     };
-    return labels[role as keyof typeof labels] || role;
+    return labels[role] || role;
   };
 
   return (
     <div className="p-8 space-y-8">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-foreground mb-2">マイプロフィール</h1>
-        <p className="text-muted-foreground">プロフィール情報を管理し、実績を確認しましょう</p>
+        <h1 className="text-4xl font-bold text-foreground mb-2">{t("profile.title")}</h1>
+        <p className="text-muted-foreground">{t("profile.subtitle")}</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -118,7 +120,7 @@ const Profile = () => {
         <Card className="bg-card border-border shadow-card lg:col-span-1">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
-              プロフィール
+              {t("profile.cardTitle")}
               <Button
                 size="sm"
                 variant="outline"
@@ -139,14 +141,14 @@ const Profile = () => {
               {profile?.role === "artist" && (
                 <Button size="sm" variant="outline" className="text-xs">
                   <Upload className="w-3 h-3 mr-1" />
-                  アー写をアップロード
+                  {t("profile.uploadAvatar")}
                 </Button>
               )}
             </div>
 
             <div className="space-y-4">
               <div>
-                <Label htmlFor="display-name">表示名</Label>
+                <Label htmlFor="display-name">{t("profile.displayName")}</Label>
                 {isEditing ? (
                   <Input
                     id="display-name"
@@ -160,45 +162,45 @@ const Profile = () => {
               </div>
 
               <div>
-                <Label>役割</Label>
+                <Label>{t("profile.role.label")}</Label>
                 <Badge variant="secondary" className="mt-1 block w-fit">
                   {getRoleLabel(profile?.role || "")}
                 </Badge>
               </div>
 
               <div>
-                <Label htmlFor="bio">プロフィール</Label>
+                <Label htmlFor="bio">{t("profile.bio")}</Label>
                 {isEditing ? (
                   <Textarea
                     id="bio"
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
-                    placeholder="自己紹介を入力してください..."
+                    placeholder={t("profile.bioPlaceholder") || undefined}
                     className="mt-1 min-h-[100px]"
                   />
                 ) : (
                   <p className="text-muted-foreground mt-1">
-                    {profile?.bio || "まだプロフィールが設定されていません"}
+                    {profile?.bio || t("profile.noBio")}
                   </p>
                 )}
               </div>
 
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Calendar className="w-4 h-4" />
-                参加日: {new Date(profile?.created_at || "").toLocaleDateString("ja-JP")}
+                {t("profile.joined")}: {new Date(profile?.created_at || "").toLocaleDateString()}
               </div>
             </div>
 
             {profile?.role === "artist" && (
               <div className="space-y-3">
-                <Label>デモ音源アップロード</Label>
+                <Label>{t("profile.demoUpload")}</Label>
                 <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-4 text-center">
                   <Music className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
                   <p className="text-sm text-muted-foreground mb-2">
-                    {demoFile ? demoFile.name : "デモ音源をアップロード"}
+                    {demoFile ? demoFile.name : t("profile.uploadDemo")}
                   </p>
                   <p className="text-xs text-accent mb-3">
-                    ※ アップロードされたデモ音源は社内のみ視聴可能です
+                    {t("profile.demoNote")}
                   </p>
                   <div className="space-y-2">
                     <input
@@ -215,7 +217,7 @@ const Profile = () => {
                       disabled={uploading}
                     >
                       <Upload className="w-3 h-3 mr-1" />
-                      ファイルを選択
+                      {t("profile.chooseFile")}
                     </Button>
                     {demoFile && (
                       <Button 
@@ -224,7 +226,7 @@ const Profile = () => {
                         onClick={handleDemoUpload}
                         disabled={uploading}
                       >
-                        {uploading ? "アップロード中..." : "アップロード"}
+                        {uploading ? t("profile.uploading") : t("profile.upload")}
                       </Button>
                     )}
                   </div>
@@ -238,10 +240,10 @@ const Profile = () => {
         <div className="lg:col-span-2">
           <Tabs defaultValue="projects" className="space-y-6">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="projects">制作実績</TabsTrigger>
-              <TabsTrigger value="achievements">実績・評価</TabsTrigger>
+              <TabsTrigger value="projects">{t("profile.projectsTab")}</TabsTrigger>
+              <TabsTrigger value="achievements">{t("profile.achievementsTab")}</TabsTrigger>
               {(profile?.role === "arranger" || profile?.role === "engineer") && (
-                <TabsTrigger value="history">過去の制作履歴</TabsTrigger>
+                <TabsTrigger value="history">{t("profile.historyTab")}</TabsTrigger>
               )}
             </TabsList>
 
@@ -250,7 +252,7 @@ const Profile = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Music className="w-5 h-5 text-accent" />
-                    参加プロジェクト
+                    {t("profile.participatedProjects")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -289,12 +291,8 @@ const Profile = () => {
                   ) : (
                     <div className="text-center py-8">
                       <Music className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-foreground mb-2">
-                        まだプロジェクトがありません
-                      </h3>
-                      <p className="text-muted-foreground">
-                        プロジェクトに参加すると、ここに表示されます
-                      </p>
+                      <h3 className="text-lg font-semibold text-foreground mb-2">{t("profile.noProjects")}</h3>
+                      <p className="text-muted-foreground">{t("profile.noProjectsDesc")}</p>
                     </div>
                   )}
                 </CardContent>
@@ -306,39 +304,39 @@ const Profile = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Star className="w-5 h-5 text-accent" />
-                    実績・評価
+                    {t("profile.achievementsTab")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     <div className="text-center">
                       <div className="text-2xl font-bold text-foreground">12</div>
-                      <p className="text-sm text-muted-foreground">完成プロジェクト</p>
+                      <p className="text-sm text-muted-foreground">{t("profile.completedProjects")}</p>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-foreground">4.8</div>
-                      <p className="text-sm text-muted-foreground">平均評価</p>
+                      <p className="text-sm text-muted-foreground">{t("profile.avgRating")}</p>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-foreground">125K</div>
-                      <p className="text-sm text-muted-foreground">総ストリーム数</p>
+                      <p className="text-sm text-muted-foreground">{t("profile.totalStreams")}</p>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-foreground">¥84,500</div>
-                      <p className="text-sm text-muted-foreground">総収益</p>
+                      <p className="text-sm text-muted-foreground">{t("profile.totalEarnings")}</p>
                     </div>
                   </div>
 
                   <div className="space-y-3">
-                    <h4 className="font-semibold">獲得バッジ</h4>
+                    <h4 className="font-semibold">{t("profile.badges")}</h4>
                     <div className="flex flex-wrap gap-2">
                       <Badge variant="secondary" className="flex items-center gap-1">
                         <Star className="w-3 h-3" />
-                        ファーストプロジェクト
+                        {t("profile.firstProject")}
                       </Badge>
                       <Badge variant="secondary" className="flex items-center gap-1">
                         <Music className="w-3 h-3" />
-                        10プロジェクト達成
+                        {t("profile.tenProjects")}
                       </Badge>
                     </div>
                   </div>
@@ -352,9 +350,9 @@ const Profile = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <BarChart3 className="w-5 h-5 text-accent" />
-                      過去の制作履歴
-                    </CardTitle>
-                  </CardHeader>
+                      {t("profile.historyTab")}
+                  </CardTitle>
+                </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       {mockProjects.map((project) => (

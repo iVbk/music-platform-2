@@ -9,6 +9,7 @@ import WaveformVisualizer from "@/components/WaveformVisualizer";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 interface DemoTrack {
   id: string;
@@ -33,6 +34,7 @@ const DemoReview = () => {
   const [demos, setDemos] = useState<DemoTrack[]>([]);
   const [loading, setLoading] = useState(true);
   const { profile } = useAuth();
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchDemos();
@@ -59,8 +61,8 @@ const DemoReview = () => {
     } catch (error) {
       console.error('Error fetching demos:', error);
       toast({
-        title: "エラー",
-        description: "デモ音源の読み込みに失敗しました",
+        title: t("common.error"),
+        description: t("demoReview.loadFailed"),
         variant: "destructive",
       });
     } finally {
@@ -83,8 +85,8 @@ const DemoReview = () => {
       if (error) throw error;
 
       toast({
-        title: "デモ音源を採用しました",
-        description: "デモ音源が正常に採用されました",
+        title: t("demoReview.approvedTitle"),
+        description: t("demoReview.approvedDesc"),
       });
 
       // Refresh the list
@@ -94,8 +96,8 @@ const DemoReview = () => {
     } catch (error) {
       console.error('Error approving demo:', error);
       toast({
-        title: "エラー",
-        description: "デモ音源の採用に失敗しました",
+        title: t("common.error"),
+        description: t("demoReview.approveFailed"),
         variant: "destructive",
       });
     }
@@ -116,8 +118,8 @@ const DemoReview = () => {
       if (error) throw error;
 
       toast({
-        title: "デモ音源を不採用にしました",
-        description: "フィードバックと共にデモ音源を不採用にしました",
+        title: t("demoReview.rejectedTitle"),
+        description: t("demoReview.rejectedDesc"),
       });
 
       // Refresh the list
@@ -127,8 +129,8 @@ const DemoReview = () => {
     } catch (error) {
       console.error('Error rejecting demo:', error);
       toast({
-        title: "エラー",
-        description: "デモ音源の不採用に失敗しました",
+        title: t("common.error"),
+        description: t("demoReview.rejectFailed"),
         variant: "destructive",
       });
     }
@@ -164,7 +166,7 @@ const DemoReview = () => {
       <div className="flex items-center justify-center min-h-screen">
         <Card>
           <CardContent className="p-6">
-            <p className="text-muted-foreground">アクセスが拒否されました。管理者権限が必要です。</p>
+            <p className="text-muted-foreground">{t("demoReview.accessDenied")}</p>
           </CardContent>
         </Card>
       </div>
@@ -176,22 +178,22 @@ const DemoReview = () => {
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">デモ音源審査</h1>
-        <p className="text-muted-foreground">新人アーティストのデモ音源を審査・選定します</p>
+        <h1 className="text-3xl font-bold mb-2">{t("demoReview.title")}</h1>
+        <p className="text-muted-foreground">{t("demoReview.subtitle")}</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>審査待ちデモ音源 ({demos.length}件)</CardTitle>
+            <CardTitle>{t("demoReview.pendingList", { count: demos.length })}</CardTitle>
             <CardDescription>
-              楽曲をクリックして審査・フィードバックを行ってください
+              {t("demoReview.pendingHelp")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4 max-h-96 overflow-y-auto">
               {demos.length === 0 ? (
-                <p className="text-muted-foreground text-center py-8">審査待ちのデモ音源はありません</p>
+                <p className="text-muted-foreground text-center py-8">{t("demoReview.noPending")}</p>
               ) : (
                 demos.map((demo) => (
                   <div
@@ -210,7 +212,7 @@ const DemoReview = () => {
                           <Badge variant="secondary">{demo.genre}</Badge>
                         </div>
                         <p className="text-sm text-muted-foreground mb-2">
-                          アーティスト: {demo.profiles?.display_name || '不明'}
+                          {t("demoReview.artist")}: {demo.profiles?.display_name || t("demoReview.unknown")}
                         </p>
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <span className="flex items-center gap-1">
@@ -219,7 +221,7 @@ const DemoReview = () => {
                           </span>
                           <Badge variant="outline" className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
-                            審査待ち
+                            {t("demoReview.pending")}
                           </Badge>
                         </div>
                         <WaveformVisualizer />
@@ -250,14 +252,14 @@ const DemoReview = () => {
             <>
               <Card>
                 <CardHeader>
-                  <CardTitle>審査: {selectedDemoData.title}</CardTitle>
-                  <CardDescription>フィードバックを入力して審査結果を決定してください</CardDescription>
+                  <CardTitle>{t("demoReview.reviewing", { title: selectedDemoData.title })}</CardTitle>
+                  <CardDescription>{t("demoReview.enterFeedback")}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <h4 className="font-medium mb-2">フィードバック</h4>
+                    <h4 className="font-medium mb-2">{t("demoReview.feedback")}</h4>
                     <Textarea
-                      placeholder="アーティストへのフィードバックを入力してください..."
+                      placeholder={t("demoReview.feedbackPlaceholder") || undefined}
                       value={feedback}
                       onChange={(e) => setFeedback(e.target.value)}
                       className="min-h-[100px]"
@@ -270,7 +272,7 @@ const DemoReview = () => {
                       className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                     >
                       <CheckCircle className="w-4 h-4 mr-2" />
-                      採用
+                      {t("demoReview.approve")}
                     </Button>
                     <Button 
                       onClick={() => handleReject(selectedDemoData.id)}
@@ -278,7 +280,7 @@ const DemoReview = () => {
                       className="flex-1"
                     >
                       <XCircle className="w-4 h-4 mr-2" />
-                      不採用
+                      {t("demoReview.reject")}
                     </Button>
                   </div>
                 </CardContent>
@@ -286,7 +288,7 @@ const DemoReview = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>アーティストプロフィール</CardTitle>
+                  <CardTitle>{t("demoReview.artistProfile")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-start gap-4">
@@ -297,11 +299,11 @@ const DemoReview = () => {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
-                      <h3 className="font-medium">{selectedDemoData.profiles?.display_name || '不明'}</h3>
-                      <p className="text-sm text-muted-foreground">アーティスト</p>
+                      <h3 className="font-medium">{selectedDemoData.profiles?.display_name || t("demoReview.unknown")}</h3>
+                      <p className="text-sm text-muted-foreground">{t("demoReview.artist")}</p>
                       {selectedDemoData.description && (
                         <div className="mt-3">
-                          <h4 className="text-sm font-medium mb-1">楽曲について:</h4>
+                          <h4 className="text-sm font-medium mb-1">{t("demoReview.aboutSong")}</h4>
                           <p className="text-sm text-muted-foreground">{selectedDemoData.description}</p>
                         </div>
                       )}
@@ -315,7 +317,7 @@ const DemoReview = () => {
               <CardContent className="p-8 text-center">
                 <div className="text-muted-foreground">
                   <User className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>審査するデモ音源を選択してください</p>
+                  <p>{t("demoReview.selectPrompt")}</p>
                 </div>
               </CardContent>
             </Card>
