@@ -249,6 +249,7 @@
     "typeMessage": "メッセージを入力",
     "send": "送信",
     "sampleHeader": "ロール別のサンプルメッセージ",
+    "samplesButton": "サンプル",
     "noUsers": "ユーザーが見つかりません",
     "samples": {
       "artist": [

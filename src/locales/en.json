@@ -249,6 +249,7 @@
     "typeMessage": "Type a message",
     "send": "Send",
     "sampleHeader": "Sample messages by role",
+    "samplesButton": "Samples",
     "noUsers": "No users found",
     "samples": {
       "artist": [

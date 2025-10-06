@@ -14,33 +14,33 @@ const ProductionRooms = () => {
     {
       id: 1,
       trackTitle: "Midnight Dreams",
-      artist: "新人アーティスト A",
+      artist: "New Artist A",
       arranger: "田中 良子",
       engineer: "佐藤 健太",
       status: "in_progress",
-      lastMessage: "ミックスが完成しました！",
+      lastMessage: "Mix is done!",
       lastMessageTime: "2 min ago",
       unread: 2
     },
     {
       id: 2,
       trackTitle: "Urban Flow", 
-      artist: "新人アーティスト B",
+      artist: "New Artist B",
       arranger: "山田 美咲",
       engineer: null,
       status: "setup",
-      lastMessage: "エンジニアの方をお待ちしています",
+      lastMessage: "Waiting for an engineer",
       lastMessageTime: "1 hour ago",
       unread: 0
     },
     {
       id: 3,
       trackTitle: "Silent Waves",
-      artist: "新人アーティスト C",
+      artist: "New Artist C",
       arranger: "鈴木 太郎",
       engineer: "高橋 花子",
       status: "review",
-      lastMessage: "最終確認をお願いします",
+      lastMessage: "Please do the final check",
       lastMessageTime: "3 hours ago",
       unread: 1
     }
@@ -50,21 +50,21 @@ const ProductionRooms = () => {
     {
       id: 1,
       user: "Admin",
-      message: "プロジェクトを開始します。よろしくお願いします！",
+      message: "Kicking off the project. Looking forward to working together!",
       time: "10:00 AM",
       isFile: false
     },
     {
       id: 2,
       user: "田中 良子",
-      message: "アレンジを開始しました。まず基本的なコード進行を確認しませんか？",
+      message: "I've started arranging. Shall we review the basic chord progression first?",
       time: "10:15 AM",
       isFile: false
     },
     {
       id: 3,
-      user: "新人アーティスト A",
-      message: "はい！楽しみにしています。こちらが参考音源です。",
+      user: "New Artist A",
+      message: "Yes! Excited. Here is the reference track.",
       time: "10:20 AM",
       isFile: true,
       fileName: "reference-track.mp3"
@@ -72,7 +72,7 @@ const ProductionRooms = () => {
     {
       id: 4,
       user: "佐藤 健太",
-      message: "ミックスが完成しました！確認をお願いします。",
+      message: "Mix is done! Please review.",
       time: "2:30 PM",
       isFile: true,
       fileName: "midnight-dreams-mix-v1.wav"
@@ -81,10 +81,10 @@ const ProductionRooms = () => {
 
   const getStatusBadge = (status: string) => {
     const variants = {
-      setup: { variant: "secondary" as const, text: "セットアップ中" },
-      in_progress: { variant: "default" as const, text: "制作中" },
-      review: { variant: "outline" as const, text: "レビュー中" },
-      completed: { variant: "secondary" as const, text: "完成" }
+      setup: { variant: "secondary" as const, text: "Setup" },
+      in_progress: { variant: "default" as const, text: "In Progress" },
+      review: { variant: "outline" as const, text: "In Review" },
+      completed: { variant: "secondary" as const, text: "Completed" }
     };
     return variants[status as keyof typeof variants] || variants.setup;
   };
@@ -99,20 +99,20 @@ const ProductionRooms = () => {
   return (
     <div className="p-8 h-[calc(100vh-2rem)] flex flex-col">
       <div className="mb-6">
-        <h1 className="text-4xl font-bold text-foreground mb-2">制作ルーム</h1>
-        <p className="text-muted-foreground">チームとリアルタイムでコラボレーション</p>
+        <h1 className="text-4xl font-bold text-foreground mb-2">Production Rooms</h1>
+        <p className="text-muted-foreground">Collaborate with your team in real time</p>
       </div>
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 min-h-0">
         {/* Room List */}
         <div className="lg:col-span-1">
           <Card className="bg-card border-border shadow-card h-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="w-5 h-5 text-accent" />
-                アクティブなルーム ({rooms.length})
-              </CardTitle>
-            </CardHeader>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5 text-accent" />
+                  Active Rooms ({rooms.length})
+                </CardTitle>
+              </CardHeader>
             <CardContent className="p-0">
               <ScrollArea className="h-[600px]">
                 <div className="space-y-2 p-4">
@@ -141,9 +141,9 @@ const ProductionRooms = () => {
                             {statusInfo.text}
                           </Badge>
                           <div className="text-xs text-muted-foreground">
-                            <p>🎤 アーティスト: {room.artist}</p>
-                            <p>🎹 アレンジャー: {room.arranger}</p>
-                            <p>🎧 エンジニア: {room.engineer || "待機中..."}</p>
+                            <p>🎤 Artist: {room.artist}</p>
+                            <p>🎹 Arranger: {room.arranger}</p>
+                            <p>🎧 Engineer: {room.engineer || "Pending..."}</p>
                           </div>
                           <div className="text-xs text-muted-foreground">
                             <p className="truncate">{room.lastMessage}</p>
@@ -174,24 +174,24 @@ const ProductionRooms = () => {
                   </CardTitle>
                   <div className="flex items-center gap-2">
                     <Users className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">4 メンバー</span>
-                    <Badge variant="outline" className="text-xs">制作中</Badge>
+                    <span className="text-sm text-muted-foreground">4 members</span>
+                    <Badge variant="outline" className="text-xs">In Progress</Badge>
                   </div>
                   <div className="mt-2">
-                    <div className="text-xs text-muted-foreground mb-1">進行状況</div>
+                    <div className="text-xs text-muted-foreground mb-1">Progress</div>
                     <div className="w-full bg-secondary rounded-full h-2">
                       <div className="bg-gradient-neon h-2 rounded-full" style={{ width: "65%" }}></div>
                     </div>
-                    <div className="text-xs text-muted-foreground mt-1">65% 完了</div>
+                    <div className="text-xs text-muted-foreground mt-1">65% complete</div>
                   </div>
                   <div className="mt-3 space-y-1 text-xs">
                     <div className="p-2 bg-secondary/30 rounded">
                       <div className="flex items-center justify-between">
-                        <span>標準ライセンス契約（70%/15%/15%）</span>
-                        <Badge variant="outline" className="text-xs">承認待ち</Badge>
+                        <span>Standard license (70%/15%/15%)</span>
+                        <Badge variant="outline" className="text-xs">Pending</Badge>
                       </div>
                       <Button size="sm" variant="outline" className="mt-2 text-xs">
-                        契約内容を確認
+                        Review contract
                       </Button>
                     </div>
                   </div>
@@ -215,7 +215,7 @@ const ProductionRooms = () => {
                               <Paperclip className="w-4 h-4 text-accent" />
                               <span className="text-sm text-accent">{message.fileName}</span>
                               <Button size="sm" variant="ghost" className="ml-auto text-xs">
-                                ダウンロード
+                                Download
                               </Button>
                             </div>
                           )}
@@ -234,7 +234,7 @@ const ProductionRooms = () => {
                     <Input
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
-                      placeholder="メッセージを入力..."
+                      placeholder="Type a message..."
                       onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                       className="flex-1"
                     />
@@ -255,8 +255,8 @@ const ProductionRooms = () => {
                   <div className="text-center space-y-4">
                     <MessageSquare className="w-16 h-16 text-muted-foreground mx-auto" />
                     <div>
-                      <h3 className="text-lg font-semibold text-foreground">制作ルームを選択</h3>
-                      <p className="text-muted-foreground">コラボレーションを開始するルームを選んでください</p>
+                      <h3 className="text-lg font-semibold text-foreground">Select a production room</h3>
+                      <p className="text-muted-foreground">Choose a room to start collaborating</p>
                     </div>
                   </div>
               </CardContent>

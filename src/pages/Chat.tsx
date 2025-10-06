@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -166,8 +167,39 @@ const Chat = () => {
           {/* Conversation */}
           <div className="flex-1 flex flex-col">
             {!selectedUser ? (
-              <div className="flex-1 flex items-center justify-center text-muted-foreground">
-                {t("chat.selectPrompt")}
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center text-muted-foreground max-w-3xl px-6">
+                  <div className="mb-6">{t("chat.selectPrompt")}</div>
+                  <div className="text-foreground font-medium mb-3">{t("chat.sampleHeader")}</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                    {(["artist", "arranger", "engineer", "admin"] as const).map((roleKey) => {
+                      const samplesMaybe = t(`chat.samples.${roleKey}`, { returnObjects: true }) as unknown;
+                      const samples = Array.isArray(samplesMaybe) ? samplesMaybe : [];
+                      return (
+                        <div key={roleKey} className="p-3 rounded-md bg-secondary/50">
+                          <div className="text-xs text-muted-foreground mb-2">{t(`profile.role.${roleKey}`)}</div>
+                          <div className="flex flex-wrap gap-2">
+                            {samples.slice(0, 3).map((s, idx) => (
+                              <Button
+                                key={idx}
+                                size="sm"
+                                variant="outline"
+                                onClick={async () => {
+                                  setMessage(String(s));
+                                  try {
+                                    await navigator.clipboard?.writeText(String(s));
+                                  } catch {}
+                                }}
+                              >
+                                {String(s)}
+                              </Button>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             ) : (
               <>
@@ -221,7 +253,37 @@ const Chat = () => {
                     <div ref={messagesEndRef} />
                   </div>
                 </ScrollArea>
-                <div className="p-4 border-t border-border flex gap-2">
+                <div className="p-4 border-t border-border flex gap-2 items-center">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        {t("chat.samplesButton")}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-96" align="start">
+                      <div className="text-sm font-medium mb-2">{t("chat.sampleHeader")}</div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {(["artist", "arranger", "engineer", "admin"] as const).map((roleKey) => {
+                          const samplesMaybe = t(`chat.samples.${roleKey}`, { returnObjects: true }) as unknown;
+                          const samples = Array.isArray(samplesMaybe) ? samplesMaybe : [];
+                          // Only render role card if it has samples
+                          if (!samples.length) return null;
+                          return (
+                            <div key={roleKey} className="p-2 rounded-md bg-secondary/50">
+                              <div className="text-[11px] text-muted-foreground mb-2">{t(`profile.role.${roleKey}`)}</div>
+                              <div className="flex flex-wrap gap-2">
+                                {samples.slice(0, 3).map((s, idx) => (
+                                  <Button key={idx} size="sm" variant="outline" onClick={() => setMessage(String(s))}>
+                                    {String(s)}
+                                  </Button>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                   <Input
                     placeholder={t("chat.typeMessage")}
                     value={message}
