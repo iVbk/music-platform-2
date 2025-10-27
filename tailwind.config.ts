@@ -86,8 +86,8 @@ export default {
           to: { height: "0" },
         },
         "pulse-neon": {
-          "0%, 100%": { boxShadow: "0 0 20px hsl(270 100% 65% / 0.4)" },
-          "50%": { boxShadow: "0 0 40px hsl(270 100% 65% / 0.8)" },
+          "0%, 100%": { boxShadow: "0 0 20px hsl(var(--primary) / 0.4)" },
+          "50%": { boxShadow: "0 0 40px hsl(var(--primary) / 0.8)" },
         },
         "slide-up": {
           from: { transform: "translateY(20px)", opacity: "0" },

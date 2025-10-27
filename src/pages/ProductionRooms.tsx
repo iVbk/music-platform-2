@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MessageSquare, Send, Paperclip, Music, Users, Clock } from "lucide-react";
+import { MessageSquare, Send, Paperclip, Music, Users, Clock, Upload as UploadIcon } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 const ProductionRooms = () => {
   const [selectedRoom, setSelectedRoom] = useState<number | null>(1);
@@ -98,9 +99,17 @@ const ProductionRooms = () => {
 
   return (
     <div className="p-8 h-[calc(100vh-2rem)] flex flex-col">
-      <div className="mb-6">
-        <h1 className="text-4xl font-bold text-foreground mb-2">Production Rooms</h1>
-        <p className="text-muted-foreground">Collaborate with your team in real time</p>
+      <div className="mb-6 flex items-start justify-between">
+        <div>
+          <h1 className="text-4xl font-bold text-foreground mb-2">Production Rooms</h1>
+          <p className="text-muted-foreground">Collaborate with your team in real time</p>
+        </div>
+        <NavLink to="/upload?tab=upload">
+          <Button className="bg-gradient-neon hover:shadow-neon flex items-center gap-2">
+            <UploadIcon className="w-4 h-4" />
+            Upload Music
+          </Button>
+        </NavLink>
       </div>
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 min-h-0">

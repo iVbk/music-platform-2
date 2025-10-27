@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { Home, Upload, Users, TrendingUp, DollarSign, Music, MessageSquare, Search, Settings, LogOut } from "lucide-react";
+import { Home, Upload, Users, TrendingUp, Music, MessageSquare, Search, Settings, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -16,45 +16,34 @@ const Navigation = ({ userRole }: NavigationProps) => {
   const toggleLanguage = () => i18n.changeLanguage(currentLng === "en" ? "ja" : "en");
   
   const getNavItems = (role: string) => {
-    const baseItems = [
-      { to: "/", label: t("nav.dashboard"), icon: Home },
-    ];
-
     if (role === 'artist') {
       return [
-        ...baseItems,
         { to: "/upload", label: t("nav.upload"), icon: Upload },
         { to: "/search", label: t("nav.search"), icon: Search },
-        { to: "/chat", label: t("nav.chat"), icon: MessageSquare },
         { to: "/rooms", label: t("nav.rooms"), icon: MessageSquare },
-        { to: "/earnings", label: t("nav.earnings"), icon: DollarSign },
       ];
     }
 
     if (role === 'arranger' || role === 'engineer') {
       return [
-        ...baseItems,
         { to: "/profile", label: t("nav.profile"), icon: Users },
         { to: "/search", label: t("nav.search"), icon: Search },
-        { to: "/chat", label: t("nav.chat"), icon: MessageSquare },
         { to: "/rooms", label: t("nav.rooms"), icon: MessageSquare },
-        { to: "/earnings", label: t("nav.earnings"), icon: DollarSign },
       ];
     }
 
     if (role === 'admin') {
       return [
-        ...baseItems,
+        { to: "/", label: t("nav.dashboard"), icon: Home },
         { to: "/demo-review", label: t("nav.demoReview"), icon: Music },
         { to: "/coordination", label: t("nav.coordination"), icon: Users },
-        { to: "/chat", label: t("nav.chat"), icon: MessageSquare },
         { to: "/rooms", label: t("nav.allRooms"), icon: MessageSquare },
         { to: "/analytics", label: t("nav.analytics"), icon: TrendingUp },
         { to: "/settings", label: t("nav.settings"), icon: Settings },
       ];
     }
 
-    return baseItems;
+    return [];
   };
 
   const navItems = getNavItems(userRole);

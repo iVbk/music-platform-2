@@ -6,12 +6,15 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Upload, Music, Star, Calendar, MapPin, Edit, Save, Play, BarChart3 } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Upload as UploadIcon, Music, Star, Calendar, MapPin, Edit, Save, Play, BarChart3 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
+import UploadPage from "@/pages/Upload";
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const Profile = () => {
   const { profile } = useAuth();
@@ -22,6 +25,15 @@ const Profile = () => {
   const [bio, setBio] = useState(profile?.bio || "");
   const [demoFile, setDemoFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialTab = (searchParams.get("tab") as string) || "projects";
+  const [activeTab, setActiveTab] = useState<string>(initialTab);
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab && tab !== activeTab) setActiveTab(tab);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const mockProjects = [
     {
@@ -108,16 +120,24 @@ const Profile = () => {
     return labels[role] || role;
   };
 
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    const next = new URLSearchParams(searchParams);
+    next.set("tab", value);
+    setSearchParams(next, { replace: true });
+  };
+
   return (
     <div className="p-8 space-y-8">
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-4xl font-bold text-foreground mb-2">{t("profile.title")}</h1>
         <p className="text-muted-foreground">{t("profile.subtitle")}</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Profile Card */}
-        <Card className="bg-card border-border shadow-card lg:col-span-1">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Profile Card */}
+            <Card className="bg-card border-border shadow-card lg:col-span-1">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               {t("profile.cardTitle")}
@@ -140,7 +160,7 @@ const Profile = () => {
               </Avatar>
               {profile?.role === "artist" && (
                 <Button size="sm" variant="outline" className="text-xs">
-                  <Upload className="w-3 h-3 mr-1" />
+                  <UploadIcon className="w-3 h-3 mr-1" />
                   {t("profile.uploadAvatar")}
                 </Button>
               )}
@@ -216,7 +236,7 @@ const Profile = () => {
                       onClick={() => document.getElementById('demo-upload')?.click()}
                       disabled={uploading}
                     >
-                      <Upload className="w-3 h-3 mr-1" />
+                      <UploadIcon className="w-3 h-3 mr-1" />
                       {t("profile.chooseFile")}
                     </Button>
                     {demoFile && (
@@ -236,18 +256,20 @@ const Profile = () => {
           </CardContent>
         </Card>
 
-        {/* Content Tabs */}
+        {/* Right column content (tabs + content) */}
         <div className="lg:col-span-2">
-          <Tabs defaultValue="projects" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="projects">{t("profile.projectsTab")}</TabsTrigger>
-              <TabsTrigger value="achievements">{t("profile.achievementsTab")}</TabsTrigger>
-              {(profile?.role === "arranger" || profile?.role === "engineer") && (
-                <TabsTrigger value="history">{t("profile.historyTab")}</TabsTrigger>
-              )}
-            </TabsList>
-
-            <TabsContent value="projects" className="space-y-4">
+          {/* Scoped TabsList: match right column width */}
+          <TabsList className="grid w-full grid-cols-3 md:grid-cols-4 mb-4">
+            <TabsTrigger value="projects">{t("profile.projectsTab")}</TabsTrigger>
+            <TabsTrigger value="achievements">{t("profile.achievementsTab")}</TabsTrigger>
+            {(profile?.role === "arranger" || profile?.role === "engineer") && (
+              <TabsTrigger value="history">{t("profile.historyTab")}</TabsTrigger>
+            )}
+            <TabsTrigger value="upload">{t("profile.uploadTab")}</TabsTrigger>
+          </TabsList>
+          {/* Projects */}
+          {activeTab === "projects" && (
+            <div className="space-y-4">
               <Card className="bg-card border-border shadow-card">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -297,9 +319,12 @@ const Profile = () => {
                   )}
                 </CardContent>
               </Card>
-            </TabsContent>
+            </div>
+          )}
 
-            <TabsContent value="achievements" className="space-y-4">
+          {/* Achievements */}
+          {activeTab === "achievements" && (
+            <div className="space-y-4">
               <Card className="bg-card border-border shadow-card">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -342,10 +367,12 @@ const Profile = () => {
                   </div>
                 </CardContent>
               </Card>
-            </TabsContent>
+            </div>
+          )}
 
-            {(profile?.role === "arranger" || profile?.role === "engineer") && (
-              <TabsContent value="history" className="space-y-4">
+          {/* History */}
+          {(profile?.role === "arranger" || profile?.role === "engineer") && activeTab === "history" && (
+            <div className="space-y-4">
                 <Card className="bg-card border-border shadow-card">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -395,11 +422,17 @@ const Profile = () => {
                     </div>
                   </CardContent>
                 </Card>
-              </TabsContent>
-            )}
-          </Tabs>
+            </div>
+          )}
+          {/* Upload */}
+          {activeTab === "upload" && (
+            <div>
+              <UploadPage />
+            </div>
+          )}
         </div>
-      </div>
+          </div>
+      </Tabs>
     </div>
   );
 };

@@ -43,7 +43,13 @@
     "streams": "ストリーム数",
     "trendingSongs": "人気楽曲",
     "topProducers": "トッププロデューサー",
-    "hire": "依頼する"
+    "hire": "依頼する",
+    "adminTitle": "管理者ダッシュボード",
+    "adminSubtitle": "提出物の確認と新規アカウントの管理",
+    "pendingDemos": "保留中のデモ",
+    "newAccounts": "新規アカウント",
+    "viewAll": "すべて表示",
+    "reviewNow": "今すぐレビュー"
   },
   "upload": {
     "invalidFileTitle": "無効なファイル形式",
@@ -203,6 +209,7 @@
     "projectsTab": "制作実績",
     "achievementsTab": "実績・評価",
     "historyTab": "過去の制作履歴",
+    "uploadTab": "デモ音源アップロード",
     "participatedProjects": "参加プロジェクト",
     "noProjects": "まだプロジェクトがありません",
     "noProjectsDesc": "プロジェクトに参加すると、ここに表示されます",

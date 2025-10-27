@@ -36,18 +36,18 @@ All colors MUST be HSL.
 
     --border: 220 13% 16%;
     --input: 220 13% 12%;
-    --ring: 270 100% 65%;
+    --ring: var(--primary);
 
     --radius: 0.75rem;
 
     /* Neon gradients */
-    --gradient-neon: linear-gradient(135deg, hsl(270 100% 65%), hsl(190 100% 65%));
+    --gradient-neon: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
     --gradient-subtle: linear-gradient(180deg, hsl(220 13% 9%), hsl(220 13% 6%));
-    --gradient-waveform: linear-gradient(90deg, hsl(270 100% 65% / 0.8), hsl(190 100% 65% / 0.8));
+    --gradient-waveform: linear-gradient(90deg, hsl(var(--primary) / 0.8), hsl(var(--accent) / 0.8));
 
     /* Audio visualization colors */
-    --waveform-primary: 270 100% 65%;
-    --waveform-secondary: 190 100% 65%;
+    --waveform-primary: var(--primary);
+    --waveform-secondary: var(--accent);
     --waveform-muted: 220 13% 25%;
 
     /* Glass effects */
@@ -59,7 +59,7 @@ All colors MUST be HSL.
     --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     /* Shadows with neon glow */
-    --shadow-neon: 0 0 30px hsl(270 100% 65% / 0.3);
+    --shadow-neon: 0 0 30px hsl(var(--primary) / 0.3);
     --shadow-card: 0 8px 32px hsl(220 13% 3% / 0.4);
     --shadow-elevated: 0 20px 40px hsl(220 13% 3% / 0.6);
   }

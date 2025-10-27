@@ -6,14 +6,11 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
 import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
-import Upload from "./pages/Upload";
 import Review from "./pages/Review";
 import DemoReview from "./pages/DemoReview";
 import ProductionRooms from "./pages/ProductionRooms";
 import Search from "./pages/Search";
 import Profile from "./pages/Profile";
-import Earnings from "./pages/Earnings";
-import Chat from "./pages/Chat";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { I18nextProvider } from "react-i18next";
@@ -40,7 +37,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const AppRoutes = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, profile } = useAuth();
   
   if (loading) {
     return (
@@ -56,14 +53,20 @@ const AppRoutes = () => {
       <Route path="/" element={
         <ProtectedRoute>
           <Layout>
-            <Dashboard />
+            {profile?.role === 'admin' ? (
+              <Dashboard />
+            ) : profile?.role === 'artist' ? (
+              <Navigate to="/upload" replace />
+            ) : (
+              <Navigate to="/profile" replace />
+            )}
           </Layout>
         </ProtectedRoute>
       } />
       <Route path="/upload" element={
         <ProtectedRoute>
           <Layout>
-            <Upload />
+            <Profile />
           </Layout>
         </ProtectedRoute>
       } />
@@ -81,24 +84,10 @@ const AppRoutes = () => {
           </Layout>
         </ProtectedRoute>
       } />
-      <Route path="/chat" element={
-        <ProtectedRoute>
-          <Layout>
-            <Chat />
-          </Layout>
-        </ProtectedRoute>
-      } />
       <Route path="/search" element={
         <ProtectedRoute>
           <Layout>
             <Search />
-          </Layout>
-        </ProtectedRoute>
-      } />
-      <Route path="/earnings" element={
-        <ProtectedRoute>
-          <Layout>
-            <Earnings />
           </Layout>
         </ProtectedRoute>
       } />

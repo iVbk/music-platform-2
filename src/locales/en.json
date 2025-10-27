@@ -43,7 +43,13 @@
     "streams": "Streams",
     "trendingSongs": "Trending Songs",
     "topProducers": "Top Producers",
-    "hire": "Hire"
+    "hire": "Hire",
+    "adminTitle": "Admin Dashboard",
+    "adminSubtitle": "Review submissions and manage new accounts",
+    "pendingDemos": "Pending Demos",
+    "newAccounts": "New Accounts",
+    "viewAll": "View all",
+    "reviewNow": "Review now"
   },
   "upload": {
     "invalidFileTitle": "Invalid file type",
@@ -203,6 +209,7 @@
     "projectsTab": "Projects",
     "achievementsTab": "Achievements",
     "historyTab": "History",
+    "uploadTab": "Upload Demo",
     "participatedProjects": "Participated Projects",
     "noProjects": "No projects yet",
     "noProjectsDesc": "Join a project to see it here",
